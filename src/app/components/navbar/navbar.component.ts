@@ -1,0 +1,4 @@
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+@Component({selector:'app-navbar',standalone:true,imports:[RouterLink,RouterLinkActive],template:`<nav class="nav"><a routerLink="/" class="brand"><img src="assets/images/uzr-logo.png" alt="UZR Express"></a><div class="links"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a><a routerLink="/services" routerLinkActive="active">Services</a><a routerLink="/track-order" routerLinkActive="active">Track Order</a><a routerLink="/business" routerLinkActive="active">For Businesses</a><a routerLink="/become-rider" routerLinkActive="active">Become a Rider</a><a routerLink="/download-app" routerLinkActive="active">Download App</a><a routerLink="/contact" routerLinkActive="active">Contact</a></div><a class="call" href="https://wa.me/923368877657" target="_blank">0336 8877657</a></nav>`})
+export class NavbarComponent {}
