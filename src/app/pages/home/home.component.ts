@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   standalone: true,
   imports: [RouterLink],
   template: `
-<section class="hero">
+<section class="hero reveal">
   <div class="heroText">
     <span class="pill">📍 Kohat Ki</span>
     <h1>Fastest Local <span>Delivery Service</span></h1>
@@ -18,10 +18,11 @@ import { RouterLink } from '@angular/router';
     </div>
 
     <div class="actions">
-<a class="btn yellow" href="https://wa.me/923368877657" target="_blank">
-  <i class="fab fa-whatsapp"></i>
-  Order Now on WhatsApp
-</a>      <a class="btn dark" routerLink="/download-app">Download Our App</a>
+      <a class="btn yellow" href="https://wa.me/923368877657" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        Order Now on WhatsApp
+      </a>
+      <a class="btn dark" routerLink="/download-app">Download Our App</a>
     </div>
 
     <em>Aapka Karobar, Hamari Zimmedari.</em>
@@ -33,7 +34,7 @@ import { RouterLink } from '@angular/router';
   </div>
 </section>
 
-<section class="app">
+<section class="app reveal">
   <div>
     <span class="pill">NEW • UZR EXPRESS APP</span>
     <h2>Download <span>UZR Express</span> App</h2>
@@ -56,24 +57,23 @@ import { RouterLink } from '@angular/router';
   </div>
 </section>
 
-<section class="section">
+<section class="section reveal">
   <h2>Our <span>Services</span></h2>
   <div class="cards">
     <div class="card"><span class="card-icon">🍔</span><h3>Food Delivery</h3><p>Your favorite food delivered fast.</p></div>
     <div class="card"><span class="card-icon">🛒</span><h3>Grocery Delivery</h3><p>Daily essentials delivered to you.</p></div>
     <div class="card"><span class="card-icon">📦</span><h3>Parcel Delivery</h3><p>Safe and secure parcel delivery.</p></div>
-    <div class="card"><span class="card-icon">📄</span><h3>Documents</h3><p>Important documents on time.</p></div>
+    <div class="card"><span class="card-icon">📋</span><h3>Documents</h3><p>Important documents on time.</p></div>
     <div class="card"><span class="card-icon">🎁</span><h3>Gifts</h3><p>Surprises to your loved ones.</p></div>
     <div class="card"><span class="card-icon">💊</span><h3>Medicine</h3><p>Medicine delivered to doorstep.</p></div>
   </div>
 </section>
 
-<section class="split">
+<section class="split reveal">
   <div class="black">
     <h2>How It <span>Works</span></h2>
     <div class="steps">
-      <p><b>1</b>   <i class="fab fa-whatsapp"></i>
- Send order on WhatsApp/App</p>
+      <p><b>1</b> Send order on WhatsApp/App</p>
       <p><b>2</b> Rider assigned instantly</p>
       <p><b>3</b> Fast delivery to destination</p>
     </div>
@@ -86,7 +86,7 @@ import { RouterLink } from '@angular/router';
   </div>
 </section>
 
-<section class="two">
+<section class="two reveal">
   <div>
     <h2>Become a Rider</h2>
     <p>Earn daily with flexible timing.</p>
@@ -107,4 +107,24 @@ import { RouterLink } from '@angular/router';
 `,
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {}
+export class HomeComponent implements AfterViewInit {
+  ngAfterViewInit(): void {
+    const elements = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15
+      }
+    );
+
+    elements.forEach(el => observer.observe(el));
+  }
+}
