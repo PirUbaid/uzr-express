@@ -1,9 +1,110 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-@Component({standalone:true,imports:[RouterLink],template:`
-<section class="hero"><div class="heroText"><span class="pill">📍 Kohat Ki</span><h1>Fastest Local <span>Delivery Service</span></h1><p>Food, Grocery, Parcels, Gifts, Documents, Medicine & much more — delivered fast.</p><div class="badges"><b>🚚 Fast Delivery</b><b>🛡️ Secure Handling</b><b>🎧 24/7 Support</b></div><div class="actions"><a class="btn yellow" href="https://wa.me/923368877657" target="_blank">Order Now on WhatsApp</a><a class="btn dark" routerLink="/download-app">Download Our App</a></div><em>Aapka Karobar, Hamari Zimmedari.</em></div><div class="heroArt"><div class="rider">🛵</div><div class="bag">UZR<br><small>EXPRESS</small></div></div></section>
-<section class="app"><div><span class="pill">NEW • UZR EXPRESS APP</span><h2>Download <span>UZR Express</span> App</h2><p>Order deliveries instantly from your mobile with live tracking and fast rider assignment.</p><div class="checks"><p>✓ Easy Ordering</p><p>✓ Live Tracking</p><p>✓ Multiple Payment Options</p><p>✓ Secure & Fast Delivery</p></div><a class="store" routerLink="/download-app">Get App / PWA</a></div><div class="phones"><div class="phone"><b>Categories</b><p>🍔 Food</p><p>🛒 Grocery</p><p>📦 Parcel</p><p>💊 Medicine</p></div><div class="phone main"><b>Your Order is On The Way</b><div class="map">🛵</div><button>Track Order</button></div><div class="phone"><b>Track Order</b><p>Rider: Ahmed Khan</p><p>ETA: 15 min</p><p>⭐ 4.9</p></div></div></section>
-<section class="section"><h2>Our <span>Services</span></h2><div class="cards"><div class="card">🍔<h3>Food Delivery</h3><p>Your favorite food delivered fast.</p></div><div class="card">🛒<h3>Grocery Delivery</h3><p>Daily essentials delivered to you.</p></div><div class="card">📦<h3>Parcel Delivery</h3><p>Safe and secure parcel delivery.</p></div><div class="card">📄<h3>Documents</h3><p>Important documents on time.</p></div><div class="card">🎁<h3>Gifts</h3><p>Surprises to your loved ones.</p></div><div class="card">💊<h3>Medicine</h3><p>Medicine delivered to doorstep.</p></div></div></section>
-<section class="split"><div class="black"><h2>How It <span>Works</span></h2><div class="steps"><p><b>1</b> Send order on WhatsApp/App</p><p><b>2</b> Rider assigned instantly</p><p><b>3</b> Fast delivery to destination</p></div></div><div class="yellowBox"><h2>Live Tracking</h2><p>Track your order in real-time from pickup to delivery.</p><a class="btn dark" routerLink="/track-order">Track Your Order</a></div></section>
-<section class="two"><div><h2>Become a Rider</h2><p>Earn daily with flexible timing.</p><ul><li>Full Time / Part Time</li><li>Weekly Payments</li><li>Daily Earnings</li></ul><a class="btn dark" routerLink="/become-rider">Apply Now</a></div><div><h2>For Businesses</h2><p>Restaurants, grocery stores and online sellers can grow with UZR Express.</p><a class="btn yellow" routerLink="/business">Partner With Us</a></div></section>`})
+
+@Component({
+  standalone: true,
+  imports: [RouterLink],
+  template: `
+<section class="hero">
+  <div class="heroText">
+    <span class="pill">📍 Kohat Ki</span>
+    <h1>Fastest Local <span>Delivery Service</span></h1>
+    <p>Food, Grocery, Parcels, Gifts, Documents, Medicine & much more — delivered fast.</p>
+
+    <div class="badges">
+      <b>🚚 Fast Delivery</b>
+      <b>🛡️ Secure Handling</b>
+      <b>🎧 24/7 Support</b>
+    </div>
+
+    <div class="actions">
+<a class="btn yellow" href="https://wa.me/923368877657" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+  Order Now on WhatsApp
+</a>      <a class="btn dark" routerLink="/download-app">Download Our App</a>
+    </div>
+
+    <em>Aapka Karobar, Hamari Zimmedari.</em>
+  </div>
+
+  <div class="heroArt">
+    <div class="rider">🛵</div>
+    <div class="bag">UZR<br><small>EXPRESS</small></div>
+  </div>
+</section>
+
+<section class="app">
+  <div>
+    <span class="pill">NEW • UZR EXPRESS APP</span>
+    <h2>Download <span>UZR Express</span> App</h2>
+    <p>Order deliveries instantly from your mobile with live tracking and fast rider assignment.</p>
+
+    <div class="checks">
+      <p>✓ Easy Ordering</p>
+      <p>✓ Live Tracking</p>
+      <p>✓ Multiple Payment Options</p>
+      <p>✓ Secure & Fast Delivery</p>
+    </div>
+
+    <a class="store" routerLink="/download-app">Get App / PWA</a>
+  </div>
+
+  <div class="phones">
+    <div class="phone"><b>Categories</b><p>🍔 Food</p><p>🛒 Grocery</p><p>📦 Parcel</p><p>💊 Medicine</p></div>
+    <div class="phone main"><b>Your Order is On The Way</b><div class="map">🛵</div><button>Track Order</button></div>
+    <div class="phone"><b>Track Order</b><p>Rider: Ahmed Khan</p><p>ETA: 15 min</p><p>⭐ 4.9</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Our <span>Services</span></h2>
+  <div class="cards">
+    <div class="card"><span class="card-icon">🍔</span><h3>Food Delivery</h3><p>Your favorite food delivered fast.</p></div>
+    <div class="card"><span class="card-icon">🛒</span><h3>Grocery Delivery</h3><p>Daily essentials delivered to you.</p></div>
+    <div class="card"><span class="card-icon">📦</span><h3>Parcel Delivery</h3><p>Safe and secure parcel delivery.</p></div>
+    <div class="card"><span class="card-icon">📄</span><h3>Documents</h3><p>Important documents on time.</p></div>
+    <div class="card"><span class="card-icon">🎁</span><h3>Gifts</h3><p>Surprises to your loved ones.</p></div>
+    <div class="card"><span class="card-icon">💊</span><h3>Medicine</h3><p>Medicine delivered to doorstep.</p></div>
+  </div>
+</section>
+
+<section class="split">
+  <div class="black">
+    <h2>How It <span>Works</span></h2>
+    <div class="steps">
+      <p><b>1</b>   <i class="fab fa-whatsapp"></i>
+ Send order on WhatsApp/App</p>
+      <p><b>2</b> Rider assigned instantly</p>
+      <p><b>3</b> Fast delivery to destination</p>
+    </div>
+  </div>
+
+  <div class="yellowBox">
+    <h2>Live Tracking</h2>
+    <p>Track your order in real-time from pickup to delivery.</p>
+    <a class="btn dark" routerLink="/track-order">Track Your Order</a>
+  </div>
+</section>
+
+<section class="two">
+  <div>
+    <h2>Become a Rider</h2>
+    <p>Earn daily with flexible timing.</p>
+    <ul>
+      <li>Full Time / Part Time</li>
+      <li>Weekly Payments</li>
+      <li>Daily Earnings</li>
+    </ul>
+    <a class="btn dark" routerLink="/become-rider">Apply Now</a>
+  </div>
+
+  <div>
+    <h2>For Businesses</h2>
+    <p>Restaurants, grocery stores and online sellers can grow with UZR Express.</p>
+    <a class="btn yellow" routerLink="/business">Partner With Us</a>
+  </div>
+</section>
+`,
+  styleUrls: ['./home.component.scss']
+})
 export class HomeComponent {}

@@ -16,6 +16,8 @@ import { Component } from '@angular/core';
     <a class="hero-btn"
        href="https://wa.me/923368877657?text=Assalamualaikum, I want to book UZR Express delivery"
        target="_blank">
+         <i class="fab fa-whatsapp"></i>
+
       Book Delivery on WhatsApp
     </a>
   </div>

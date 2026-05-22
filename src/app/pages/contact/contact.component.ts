@@ -1,5 +1,113 @@
 import { Component } from '@angular/core';
-@Component({standalone:true,template:`
-<section class="page"><h1>contact </h1><p>UZR Express contact page. Use this page for your full business details, forms and customer instructions.</p><a class="btn yellow" href="https://wa.me/923368877657" target="_blank">Contact on WhatsApp</a></section>
-`})
+
+@Component({
+  standalone: true,
+  selector: 'app-contact',
+  template: `
+<section class="contact-hero">
+  <div class="contact-content">
+    <span class="badge">Contact UZR Express</span>
+
+    <h1>Need Delivery Help?</h1>
+
+    <p>
+      Contact UZR Express for delivery booking, rider registration, business partnership,
+      order tracking and customer support in Kohat.
+    </p>
+
+    <div class="actions">
+      <a class="btn primary"
+         href="https://wa.me/923368877657?text=Assalamualaikum, I want to contact UZR Express"
+         target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        Chat on WhatsApp
+      </a>
+
+      <a class="btn secondary" href="tel:03368877657">
+        <i class="fas fa-phone"></i>
+        Call Now
+      </a>
+    </div>
+  </div>
+
+  <div class="contact-card">
+    <h3>Contact Details</h3>
+
+    <div class="contact-row">
+      <span><i class="fab fa-whatsapp"></i></span>
+      <div>
+        <h4>WhatsApp / Phone</h4>
+        <p>0336 8877657</p>
+      </div>
+    </div>
+
+    <div class="contact-row">
+      <span><i class="fab fa-facebook-f"></i></span>
+      <div>
+        <h4>Facebook</h4>
+        <p>UZR Express Delivery</p>
+      </div>
+    </div>
+
+    <div class="contact-row">
+      <span><i class="fab fa-instagram"></i></span>
+      <div>
+        <h4>Instagram</h4>
+        <p>uzrexpress</p>
+      </div>
+    </div>
+
+    <div class="contact-row">
+      <span><i class="fas fa-location-dot"></i></span>
+      <div>
+        <h4>Location</h4>
+        <p>KDA Sector 9, Jammiya Masjid, Kohat, Pakistan</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="support-section">
+  <h2>How Can We Help?</h2>
+
+  <div class="support-grid">
+    <div class="support-card">
+      <div class="icon"><i class="fas fa-truck-fast"></i></div>
+      <h3>Book Delivery</h3>
+      <p>Send pickup and drop location to book your delivery.</p>
+    </div>
+
+    <div class="support-card">
+      <div class="icon"><i class="fas fa-box"></i></div>
+      <h3>Track Order</h3>
+      <p>Ask our support team for your current order status.</p>
+    </div>
+
+    <div class="support-card">
+      <div class="icon"><i class="fas fa-motorcycle"></i></div>
+      <h3>Become Rider</h3>
+      <p>Apply to join UZR Express rider team in Kohat.</p>
+    </div>
+
+    <div class="support-card">
+      <div class="icon"><i class="fas fa-store"></i></div>
+      <h3>Business Partner</h3>
+      <p>Register your shop, restaurant or online business with us.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-cta">
+  <h2>Fastest Way To Reach Us</h2>
+  <p>For quick response, contact us directly on WhatsApp.</p>
+
+  <a href="https://wa.me/923368877657?text=Assalamualaikum UZR Express"
+     target="_blank">
+    <i class="fab fa-whatsapp"></i>
+    Open WhatsApp
+  </a>
+</section>
+`,
+  styleUrls: ['./contact.component.scss']
+})
 export class ContactComponent {}

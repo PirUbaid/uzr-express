@@ -1,0 +1,185 @@
+.track-hero {
+  min-height: 620px;
+  padding: 90px 7%;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 40px;
+  background: linear-gradient(120deg, #fff7d7, #ffffff);
+
+  h1 {
+    font-size: 58px;
+    line-height: 1.05;
+    margin: 18px 0;
+    color: #111;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #333;
+    max-width: 680px;
+  }
+}
+
+.badge {
+  display: inline-block;
+  background: #ffc107;
+  color: #111;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-weight: 800;
+}
+
+.track-box {
+  margin-top: 30px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  input {
+    width: 320px;
+    padding: 16px;
+    border: 2px solid #111;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+
+  a {
+    background: #ffc107;
+    color: #111;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+}
+
+.status-card {
+  background: #111;
+  color: #fff;
+  border-radius: 28px;
+  padding: 38px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22);
+
+  h3 {
+    color: #ffc107;
+    font-size: 30px;
+    margin-bottom: 25px;
+  }
+}
+
+.status {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 22px;
+  opacity: 0.55;
+
+  span {
+    min-width: 42px;
+    height: 42px;
+    background: #333;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+  }
+
+  h4 {
+    margin: 0 0 5px;
+  }
+
+  p {
+    margin: 0;
+    color: #ccc;
+    font-size: 15px;
+  }
+
+  &.active {
+    opacity: 1;
+
+    span {
+      background: #ffc107;
+      color: #111;
+    }
+  }
+}
+
+.tracking-info {
+  padding: 80px 7%;
+  background: #fff;
+
+  h2 {
+    font-size: 42px;
+    margin-bottom: 35px;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.info-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 24px;
+  padding: 34px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+
+  h3 {
+    color: #111;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #555;
+  }
+}
+
+.track-cta {
+  background: #ffc107;
+  text-align: center;
+  padding: 75px 7%;
+
+  h2 {
+    font-size: 42px;
+    color: #111;
+  }
+
+  p {
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+
+  a {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 16px 34px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .track-hero,
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .track-hero {
+    padding: 60px 5%;
+
+    h1 {
+      font-size: 42px;
+    }
+  }
+
+  .track-box input {
+    width: 100%;
+  }
+}
