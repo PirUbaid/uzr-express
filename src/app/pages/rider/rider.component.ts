@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-@Component({standalone:true,template:`
+
+@Component({
+  standalone: true,
+  selector: 'app-rider',
+  template: `
 <section class="rider-hero">
   <div class="content">
     <span class="badge">Join UZR Express</span>
@@ -12,7 +16,9 @@ import { Component } from '@angular/core';
     </p>
 
     <div class="actions">
-      <a class="btn primary" href="https://wa.me/923368877657?text=I want to become a UZR Express rider" target="_blank">
+      <a class="btn primary"
+         href="https://wa.me/923368877657?text=I want to become a UZR Express rider"
+         target="_blank">
         Apply on WhatsApp
       </a>
 
@@ -25,6 +31,7 @@ import { Component } from '@angular/core';
   <div class="image-box">
     <div class="rider-card">
       <h3>Rider Benefits</h3>
+
       <ul>
         <li>Daily earning opportunity</li>
         <li>Full-time / part-time work</li>
@@ -40,6 +47,7 @@ import { Component } from '@angular/core';
   <h2>What You Need</h2>
 
   <div class="cards">
+
     <div class="card">
       <h3>Bike / Transport</h3>
       <p>You should have your own bike or transport.</p>
@@ -59,15 +67,23 @@ import { Component } from '@angular/core';
       <h3>Good Behavior</h3>
       <p>Professional dealing with customers and businesses.</p>
     </div>
+
   </div>
 </section>
 
 <section class="cta">
   <h2>Ready to Start Earning?</h2>
-  <p>Contact us now and become part of Kohat’s trusted delivery network.</p>
 
-  <a href="https://wa.me/923368877657?text=Assalamualaikum, I want to apply as UZR Express rider" target="_blank">
+  <p>
+    Contact us now and become part of Kohat’s trusted delivery network.
+  </p>
+
+  <a href="https://wa.me/923368877657?text=Assalamualaikum, I want to apply as UZR Express rider"
+     target="_blank">
     Apply Now on WhatsApp
   </a>
-</section>`})
+</section>
+`,
+  styleUrls: ['./rider.component.scss']
+})
 export class RiderComponent {}
