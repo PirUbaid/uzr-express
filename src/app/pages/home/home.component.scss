@@ -222,3 +222,289 @@
   opacity: 1;
   transform: translateY(0);
 }
+.rider-lottie {
+  position: absolute;
+  top: -20px;
+  left: 45%;
+  transform: translateX(-50%);
+  width: 360px;
+  height: 360px;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .rider-lottie {
+    top: -10px;
+    left: 50%;
+    width: 230px;
+    height: 230px;
+  }
+}
+
+
+.heroArt {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* LOTTIE RIDER */
+.rider-lottie {
+  position: absolute;
+  top: 40px;
+  right: 180px;
+  width: 340px;
+  height: 340px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* BLACK APP BAG */
+.bag {
+  position: absolute;
+  right: 80px;
+  bottom: 80px;
+  width: 220px;
+  height: 320px;
+  background: #000;
+  border-radius: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  font-size: 34px;
+  font-weight: 800;
+  z-index: 2;
+
+  box-shadow:
+    0 30px 60px rgba(0,0,0,.25),
+    inset 0 0 30px rgba(255,196,0,.08);
+}
+
+.bag small {
+  color: #ffc400;
+  font-size: 22px;
+  margin-top: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .heroArt {
+    min-height: 260px;
+    margin-top: 10px;
+  }
+
+  .rider-lottie {
+    top: 0;
+    right: 50%;
+    transform: translateX(50%);
+    width: 220px;
+    height: 220px;
+  }
+
+  .bag {
+    width: 140px;
+    height: 190px;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 10px;
+    font-size: 24px;
+  }
+
+  .bag small {
+    font-size: 16px;
+  }
+}
+
+.jewelrySpotlight {
+  display: grid;
+  grid-template-columns: 1fr .9fr;
+  gap: 34px;
+  align-items: center;
+  padding: 54px 7%;
+  background:
+    radial-gradient(circle at 82% 20%, rgba(255, 193, 7, .35), transparent 28%),
+    linear-gradient(105deg, #101010 0%, #1a1710 46%, #ffc107 100%);
+  color: #fff;
+}
+
+.dealPill {
+  display: inline-block;
+  border-radius: 999px;
+  background: #ffc107;
+  color: #111;
+  padding: 10px 16px;
+  font-weight: 900;
+}
+
+.jewelCopy h2 {
+  max-width: 620px;
+  margin: 18px 0 14px;
+  color: #fff;
+  font-size: 48px;
+  line-height: 1.05;
+}
+
+.jewelCopy p {
+  max-width: 650px;
+  margin: 0;
+  color: #f4f4f4;
+  font-size: 19px;
+  line-height: 1.55;
+}
+
+.jewelPerks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.jewelPerks b {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  padding: 10px 13px;
+  font-size: 14px;
+}
+
+.jewelPerks i {
+  color: #ffc107;
+}
+
+.jewelCta {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  background: #ffc107;
+  color: #111;
+  padding: 15px 24px;
+  font-weight: 900;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, .24);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.jewelCta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 42px rgba(0, 0, 0, .3);
+}
+
+.jewelShowcase {
+  position: relative;
+  display: grid;
+  min-height: 320px;
+  align-items: center;
+}
+
+.jewelCard {
+  display: grid;
+  width: 210px;
+  min-height: 178px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .94);
+  color: #111;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .22);
+  text-align: center;
+  transition: transform .25s ease;
+}
+
+.jewelShowcase:hover .jewelCard {
+  transform: translateY(-5px);
+}
+
+.jewelCard i {
+  color: #ffc107;
+  font-size: 42px;
+}
+
+.jewelCard b {
+  font-size: 20px;
+}
+
+.jewelCard small {
+  color: #5e4700;
+  font-weight: 800;
+}
+
+.mainJewel {
+  width: 270px;
+  min-height: 240px;
+  margin-left: auto;
+  margin-right: 58px;
+  background: #111;
+  color: #fff;
+}
+
+.mainJewel i {
+  font-size: 62px;
+}
+
+.mainJewel small {
+  color: #ffc107;
+}
+
+.jewelCard:not(.mainJewel) {
+  position: absolute;
+}
+
+.jewelCard:nth-child(2) {
+  left: 22px;
+  top: 18px;
+}
+
+.jewelCard:nth-child(3) {
+  left: 70px;
+  bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .jewelrySpotlight {
+    grid-template-columns: 1fr;
+    padding: 40px 6%;
+  }
+
+  .jewelCopy h2 {
+    font-size: 36px;
+  }
+
+  .jewelShowcase {
+    min-height: 250px;
+  }
+
+  .mainJewel {
+    width: 210px;
+    min-height: 190px;
+    margin-right: 0;
+  }
+
+  .jewelCard {
+    width: 165px;
+    min-height: 135px;
+  }
+
+  .jewelCard:nth-child(2) {
+    left: 0;
+    top: 0;
+  }
+
+  .jewelCard:nth-child(3) {
+    left: 24px;
+    bottom: 0;
+  }
+}

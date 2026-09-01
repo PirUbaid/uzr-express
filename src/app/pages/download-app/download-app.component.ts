@@ -17,7 +17,7 @@ import { Component } from '@angular/core';
 
     <div class="status-box">
       <h3>Coming Soon</h3>
-      <p>IOS /Android app and PWA install option will be available soon.</p>
+      <p>IOS /Android app install option will be available soon.</p>
     </div>
 
     <div class="actions">
