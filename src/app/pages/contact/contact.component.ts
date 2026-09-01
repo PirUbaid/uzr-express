@@ -18,12 +18,12 @@ import { Component } from '@angular/core';
     <div class="actions">
       <a class="btn primary"
          href="https://wa.me/923368877657?text=Assalamualaikum, I want to contact UZR Express"
-         target="_blank">
+         target="_blank" rel="noopener noreferrer">
         <i class="fab fa-whatsapp"></i>
         Chat on WhatsApp
       </a>
 
-      <a class="btn secondary" href="tel:03368877657">
+      <a class="btn secondary" href="tel:+923368877657">
         <i class="fas fa-phone"></i>
         Call Now
       </a>
@@ -37,7 +37,11 @@ import { Component } from '@angular/core';
       <span><i class="fab fa-whatsapp"></i></span>
       <div>
         <h4>WhatsApp / Phone</h4>
-        <p>0336 8877657</p>
+        <p>
+          <a href="https://wa.me/923368877657" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          ·
+          <a href="tel:+923368877657">0336 8877657</a>
+        </p>
       </div>
     </div>
 
@@ -45,7 +49,7 @@ import { Component } from '@angular/core';
       <span><i class="fab fa-facebook-f"></i></span>
       <div>
         <h4>Facebook</h4>
-        <p>UZR Express Delivery</p>
+        <p><a href="https://www.facebook.com/uzrexpress/" target="_blank" rel="noopener noreferrer">UZR Express Delivery</a></p>
       </div>
     </div>
 
@@ -53,7 +57,7 @@ import { Component } from '@angular/core';
       <span><i class="fab fa-instagram"></i></span>
       <div>
         <h4>Instagram</h4>
-        <p>uzrexpress</p>
+        <p><a href="https://www.instagram.com/uzrexpress/" target="_blank" rel="noopener noreferrer">uzrexpress</a></p>
       </div>
     </div>
 
@@ -61,7 +65,7 @@ import { Component } from '@angular/core';
       <span><i class="fas fa-location-dot"></i></span>
       <div>
         <h4>Location</h4>
-        <p>KDA Sector 9, Jammiya Masjid, Kohat, Pakistan</p>
+        <p>Near Pearl Oasis, City Centre Gate No. 1, KDA Sector 2, Kohat, Pakistan</p>
       </div>
     </div>
   </div>
@@ -102,7 +106,7 @@ import { Component } from '@angular/core';
   <p>For quick response, contact us directly on WhatsApp.</p>
 
   <a href="https://wa.me/923368877657?text=Assalamualaikum UZR Express"
-     target="_blank">
+     target="_blank" rel="noopener noreferrer">
     <i class="fab fa-whatsapp"></i>
     Open WhatsApp
   </a>

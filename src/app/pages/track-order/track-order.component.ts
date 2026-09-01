@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   standalone: true,
   selector: 'app-track-order',
+  imports: [FormsModule],
   template: `
 <section class="track-hero">
   <div class="track-content">
-    <span class="badge">Live Tracking</span>
+    <span class="badge">WhatsApp Order Updates</span>
 
     <h1>Track Your UZR Express Order</h1>
 
@@ -16,19 +18,29 @@ import { Component } from '@angular/core';
     </p>
 
     <div class="track-box">
-      <input type="text" placeholder="Enter Order No. e.g. UZR12345" />
-      <a href="https://wa.me/923368877657?text=Assalamualaikum, I want to track my UZR Express order"
-         target="_blank">
+      <input
+        #orderInput
+        type="text"
+        placeholder="Enter Order No. e.g. UZR12345"
+        maxlength="30"
+        [(ngModel)]="orderNumber"
+        [class.invalid]="showOrderError"
+        [attr.aria-invalid]="showOrderError"
+        aria-describedby="orderNumberError"
+      />
+      <button type="button" (click)="trackOnWhatsApp()">
         Track on WhatsApp  <i class="fab fa-whatsapp"></i>
-
-      </a>
+      </button>
     </div>
+    @if (showOrderError) {
+      <p class="field-error" id="orderNumberError" role="alert">Please enter your order number.</p>
+    }
   </div>
 
   <div class="status-card">
-    <h3>Order Status</h3>
+    <h3>Typical Order Progress</h3>
 
-    <div class="status active">
+    <div class="status">
       <span>1</span>
       <div>
         <h4>Order Received</h4>
@@ -36,7 +48,7 @@ import { Component } from '@angular/core';
       </div>
     </div>
 
-    <div class="status active">
+    <div class="status">
       <span>2</span>
       <div>
         <h4>Rider Assigned</h4>
@@ -88,11 +100,30 @@ import { Component } from '@angular/core';
   <p>Our support team is available on WhatsApp.</p>
 
   <a href="https://wa.me/923368877657?text=I need help tracking my UZR Express order"
-     target="_blank">
+     target="_blank" rel="noopener noreferrer">
     Contact Support
   </a>
 </section>
 `,
   styleUrls: ['./track-order.component.scss']
 })
-export class TrackOrderComponent {}
+export class TrackOrderComponent {
+  @ViewChild('orderInput') orderInput?: ElementRef<HTMLInputElement>;
+
+  orderNumber = '';
+  showOrderError = false;
+
+  trackOnWhatsApp(): void {
+    const trimmedOrderNumber = this.orderNumber.trim();
+    this.orderNumber = trimmedOrderNumber;
+    this.showOrderError = trimmedOrderNumber.length === 0;
+
+    if (this.showOrderError) {
+      this.orderInput?.nativeElement.focus();
+      return;
+    }
+
+    const message = `Assalamualaikum, I want to track my UZR Express order. Order Number: ${trimmedOrderNumber}`;
+    window.open(`https://wa.me/923368877657?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  }
+}

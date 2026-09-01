@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 type JewelryProduct = {
@@ -22,9 +22,9 @@ type CartItem = {
   template: `
 <section class="jewelryHero">
   <div class="heroCopy">
-    <span class="pill">UZR Jewelry Collection</span>
-    <h1>Shop Jewelry Online</h1>
-    <p>Choose items, add them to your cart, enter delivery details, and confirm your order on WhatsApp.</p>
+    <span class="pill">UZR Jewellery Collection</span>
+    <h1>Shop Jewellery Online</h1>
+    <p>Customers in Kohat can order Jewellery from UZR Express through WhatsApp with Cash on Delivery and delivery charges confirmed before completion.</p>
     <div class="heroActions">
       <a class="shopNow" href="#products">Shop Now</a>
       <button class="cartBtn" type="button" (click)="openCart()">
@@ -39,7 +39,7 @@ type CartItem = {
 
   <div class="heroPanel">
     <strong>Cash on Delivery</strong>
-    <b>Jewelry delivered in Kohat</b>
+    <b>Jewellery delivered in Kohat</b>
     <span>WhatsApp confirmation with full product summary.</span>
   </div>
 </section>
@@ -48,11 +48,11 @@ type CartItem = {
   <div class="shopHeader">
     <div>
       <span class="eyebrow">Products</span>
-      <h2>Available Jewelry</h2>
+      <h2>Available Jewellery</h2>
     </div>
     <button class="cartSummary" type="button" (click)="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
-      {{ cartCount }} items · Rs {{ cartTotal }}
+      {{ cartItemLabel }} · {{ formatPrice(cartTotal) }}
     </button>
   </div>
 
@@ -66,7 +66,7 @@ type CartItem = {
           @if (product.image) {
             <img [src]="product.image" [alt]="product.name">
           } @else {
-            <span class="photoFallback"><i class="fa-solid fa-gem"></i></span>
+            <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
           }
         </button>
 
@@ -74,11 +74,17 @@ type CartItem = {
           <small>{{ product.category }}</small>
           <h3>{{ product.name }}</h3>
           <p>{{ product.description }}</p>
-          <div class="productFoot">
-            <strong>Rs {{ product.price }}</strong>
+          <div class="productPrice">
+            <strong>{{ formatPrice(product.price) }}</strong>
+          </div>
+          <div class="productActions">
             <button type="button" (click)="addToCart(product)">
-              <i class="fa-solid fa-plus"></i>
-              Add
+              <i class="fa-solid fa-cart-plus"></i>
+              Add to Cart
+            </button>
+            <button class="buyBtn" type="button" (click)="buyNow(product)">
+              <i class="fa-solid fa-bolt"></i>
+              Buy Now
             </button>
           </div>
         </div>
@@ -98,7 +104,7 @@ type CartItem = {
       @if (selectedProduct.image) {
         <img [src]="selectedProduct.image" [alt]="selectedProduct.name">
       } @else {
-        <span class="photoFallback"><i class="fa-solid fa-gem"></i></span>
+        <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
       }
     </div>
 
@@ -106,7 +112,7 @@ type CartItem = {
       <span class="eyebrow">{{ selectedProduct.category }}</span>
       <h2>{{ selectedProduct.name }}</h2>
       <p>{{ selectedProduct.description }}</p>
-      <strong>Rs {{ selectedProduct.price }}</strong>
+      <strong>{{ formatPrice(selectedProduct.price) }}</strong>
       <div class="detailActions">
         <button class="darkAction" type="button" (click)="addToCart(selectedProduct); closeProduct()">
           <i class="fa-solid fa-cart-plus"></i>
@@ -126,7 +132,7 @@ type CartItem = {
     <div class="drawerHead">
       <div>
         <span class="eyebrow">Your Cart</span>
-        <h2>{{ cartCount }} items</h2>
+        <h2>{{ cartItemLabel }}</h2>
       </div>
       <button class="iconClose" type="button" aria-label="Close cart" (click)="closeCart()">
         <i class="fa-solid fa-xmark"></i>
@@ -137,7 +143,7 @@ type CartItem = {
       <div class="emptyCart">
         <i class="fa-solid fa-bag-shopping"></i>
         <b>Your cart is empty</b>
-        <p>Add jewelry items to continue checkout.</p>
+        <p>Add Jewellery items to continue checkout.</p>
       </div>
     } @else {
       <div class="cartItems">
@@ -152,7 +158,7 @@ type CartItem = {
             </span>
             <div>
               <b>{{ item.product.name }}</b>
-              <small>Rs {{ item.product.price }}</small>
+              <small>{{ formatPrice(item.product.price) }}</small>
               <div class="qty">
                 <button type="button" (click)="decreaseQuantity(item.product.id)">-</button>
                 <span>{{ item.quantity }}</span>
@@ -169,22 +175,56 @@ type CartItem = {
       <div class="checkout">
         <div class="totalRow">
           <span>Subtotal</span>
-          <b>Rs {{ cartTotal }}</b>
+          <b>{{ formatPrice(cartTotal) }}</b>
         </div>
+        <p class="deliveryNote">Delivery charges are not included in the subtotal and will be confirmed on WhatsApp.</p>
 
         <label>
           Your Name
-          <input type="text" placeholder="Enter name" [(ngModel)]="customerName">
+          <input
+            #nameInput
+            type="text"
+            placeholder="Enter name"
+            [(ngModel)]="customerName"
+            [class.invalid]="submitted && !isCustomerNameValid"
+            [attr.aria-invalid]="submitted && !isCustomerNameValid"
+            aria-describedby="customerNameError"
+          >
+          @if (submitted && !isCustomerNameValid) {
+            <span class="fieldError" id="customerNameError" role="alert">Please enter at least 2 characters.</span>
+          }
         </label>
 
         <label>
           Phone Number
-          <input type="tel" placeholder="03xx xxxxxxx" [(ngModel)]="customerPhone">
+          <input
+            #phoneInput
+            type="tel"
+            placeholder="03xx xxxxxxx"
+            [(ngModel)]="customerPhone"
+            [class.invalid]="submitted && !isCustomerPhoneValid"
+            [attr.aria-invalid]="submitted && !isCustomerPhoneValid"
+            aria-describedby="customerPhoneError"
+          >
+          @if (submitted && !isCustomerPhoneValid) {
+            <span class="fieldError" id="customerPhoneError" role="alert">Enter a valid Pakistani mobile number.</span>
+          }
         </label>
 
         <label>
           Delivery Address
-          <textarea rows="4" placeholder="House / street / area" [(ngModel)]="customerAddress"></textarea>
+          <textarea
+            #addressInput
+            rows="4"
+            placeholder="House / street / area"
+            [(ngModel)]="customerAddress"
+            [class.invalid]="submitted && !isCustomerAddressValid"
+            [attr.aria-invalid]="submitted && !isCustomerAddressValid"
+            aria-describedby="customerAddressError"
+          ></textarea>
+          @if (submitted && !isCustomerAddressValid) {
+            <span class="fieldError" id="customerAddressError" role="alert">Please enter a complete delivery address.</span>
+          }
         </label>
 
         <label>
@@ -192,19 +232,34 @@ type CartItem = {
           <input type="text" placeholder="Color, size, gift packing..." [(ngModel)]="orderNote">
         </label>
 
-        <a class="whatsappBtn" [href]="whatsappOrderUrl" target="_blank">
+        <button class="whatsappBtn" type="button" (click)="confirmOrder()">
           <i class="fab fa-whatsapp"></i>
           Confirm Order on WhatsApp
-        </a>
+        </button>
       </div>
     }
   </aside>
 }
+
+<section class="orderInfo">
+  <span class="eyebrow">Order Information</span>
+  <h2>Before You Order</h2>
+  <div class="infoList">
+    <p><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</p>
+    <p><i class="fa-brands fa-whatsapp"></i> WhatsApp order confirmation</p>
+    <p><i class="fa-solid fa-location-dot"></i> Delivery within Kohat</p>
+    <p><i class="fa-solid fa-truck"></i> Delivery charges confirmed on WhatsApp</p>
+  </div>
+  <p class="ownerNeeded">Business information still required: return policy, exchange policy, warranty details, material, size, colour and stock status.</p>
+</section>
 `,
   styleUrls: ['./jewelry.component.scss']
 })
 export class JewelryComponent {
   private readonly whatsappNumber = '923368877657';
+  @ViewChild('nameInput') nameInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('phoneInput') phoneInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('addressInput') addressInput?: ElementRef<HTMLTextAreaElement>;
 
   products: JewelryProduct[] = [
     {
@@ -252,7 +307,7 @@ export class JewelryComponent {
     },
     {
       id: 6,
-      name: 'Pearl Jewelry Set',
+      name: 'Pearl Jewellery Set',
       price: 2800,
       category: 'Set',
       image: '',
@@ -267,29 +322,47 @@ export class JewelryComponent {
   customerPhone = '';
   customerAddress = '';
   orderNote = '';
+  submitted = false;
 
   get cartCount(): number {
     return this.cart.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  get cartItemLabel(): string {
+    return `${this.cartCount} ${this.cartCount === 1 ? 'item' : 'items'}`;
   }
 
   get cartTotal(): number {
     return this.cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
   }
 
+  get isCustomerNameValid(): boolean {
+    return this.customerName.trim().length >= 2;
+  }
+
+  get isCustomerPhoneValid(): boolean {
+    return /^(03\d{9}|923\d{9}|\+923\d{9})$/.test(this.customerPhone.trim().replace(/\s|-/g, ''));
+  }
+
+  get isCustomerAddressValid(): boolean {
+    return this.customerAddress.trim().length >= 8;
+  }
+
   get whatsappOrderUrl(): string {
     const items = this.cart
       .map((item, index) =>
-        `${index + 1}. ${item.product.name} (${item.product.category}) - Rs ${item.product.price} x ${item.quantity} = Rs ${item.product.price * item.quantity}`
+        `${index + 1}. ${item.product.name} (${item.product.category}) - ${this.formatPrice(item.product.price)} x ${item.quantity} = ${this.formatPrice(item.product.price * item.quantity)}`
       )
       .join('\n');
 
     const message = [
-      'Assalam o Alaikum, I want to confirm my jewelry order from UZR Express.',
+      'Assalam o Alaikum, I want to confirm my Jewellery order from UZR Express.',
       '',
       'Order Items:',
       items || '-',
       '',
-      `Subtotal: Rs ${this.cartTotal}`,
+      `Subtotal: ${this.formatPrice(this.cartTotal)}`,
+      'Delivery charges are not included in the subtotal and will be confirmed on WhatsApp.',
       '',
       `Name: ${this.customerName || '-'}`,
       `Phone: ${this.customerPhone || '-'}`,
@@ -300,12 +373,18 @@ export class JewelryComponent {
     return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(message)}`;
   }
 
+  formatPrice(value: number): string {
+    return `Rs ${value.toLocaleString('en-PK')}`;
+  }
+
   viewProduct(product: JewelryProduct): void {
     this.selectedProduct = product;
+    this.updateBodyScrollLock();
   }
 
   closeProduct(): void {
     this.selectedProduct = null;
+    this.updateBodyScrollLock();
   }
 
   addToCart(product: JewelryProduct): void {
@@ -326,10 +405,12 @@ export class JewelryComponent {
 
   openCart(): void {
     this.isCartOpen = true;
+    this.updateBodyScrollLock();
   }
 
   closeCart(): void {
     this.isCartOpen = false;
+    this.updateBodyScrollLock();
   }
 
   increaseQuantity(productId: number): void {
@@ -357,5 +438,35 @@ export class JewelryComponent {
 
   removeFromCart(productId: number): void {
     this.cart = this.cart.filter((item) => item.product.id !== productId);
+  }
+
+  confirmOrder(): void {
+    this.submitted = true;
+
+    if (!this.isCustomerNameValid) {
+      this.focusInvalidField(this.nameInput);
+      return;
+    }
+
+    if (!this.isCustomerPhoneValid) {
+      this.focusInvalidField(this.phoneInput);
+      return;
+    }
+
+    if (!this.isCustomerAddressValid) {
+      this.focusInvalidField(this.addressInput);
+      return;
+    }
+
+    window.open(this.whatsappOrderUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  private focusInvalidField(field?: ElementRef<HTMLInputElement | HTMLTextAreaElement>): void {
+    field?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    field?.nativeElement.focus();
+  }
+
+  private updateBodyScrollLock(): void {
+    document.body.classList.toggle('modal-open', this.isCartOpen || !!this.selectedProduct);
   }
 }

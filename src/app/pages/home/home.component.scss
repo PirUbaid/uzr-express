@@ -222,6 +222,28 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.localLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 24px 7%;
+  background: #111;
+}
+
+.localLinks a {
+  border: 1px solid rgba(255, 193, 7, .45);
+  border-radius: 999px;
+  color: #fff;
+  padding: 11px 15px;
+  font-weight: 800;
+  transition: background .25s ease, color .25s ease;
+}
+
+.localLinks a:hover {
+  background: #ffc107;
+  color: #111;
+}
 .rider-lottie {
   position: absolute;
   top: -20px;
@@ -474,6 +496,15 @@
 }
 
 @media (max-width: 768px) {
+  .localLinks {
+    padding: 20px 6%;
+  }
+
+  .localLinks a {
+    width: 100%;
+    text-align: center;
+  }
+
   .jewelrySpotlight {
     grid-template-columns: 1fr;
     padding: 40px 6%;

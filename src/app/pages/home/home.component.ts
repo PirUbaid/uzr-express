@@ -9,27 +9,28 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
 <section class="hero reveal">
   <div class="heroText">
     <span class="pill">📍 Kohat Ki</span>
-    <h1>Fastest Local <span>Delivery Service</span></h1>
-    <p>Food, Grocery, Parcels, Gifts, Documents, Medicine & much more — delivered fast.</p>
+    <h1>Fast & Reliable <span>Delivery Service in Kohat</span></h1>
+    <p>UZR Express provides food, grocery, parcel, document, medicine, gift and Jewellery delivery within Kohat City.</p>
 
     <div class="badges">
       <b>🚚 Fast Delivery</b>
       <b>🛡️ Secure Handling</b>
-      <b>🎧 24/7 Support</b>
+      <b>🎧 WhatsApp Support</b>
+      <b>{{ googleRating }}★ on Google · {{ googleReviewCount }} reviews</b>
     </div>
 
     <div class="actions">
-      <a class="btn yellow" href="https://wa.me/923368877657" target="_blank">
+      <a class="btn yellow" href="https://wa.me/923368877657" target="_blank" rel="noopener noreferrer">
         <i class="fab fa-whatsapp"></i>
         Order Now on WhatsApp
       </a>
 
       <a class="btn dark" routerLink="/download-app">
-        Download Our App
+        App Coming Soon
       </a>
 
       <a class="btn yellow" routerLink="/jewelry">
-        Shop Jewelry
+        Shop Jewellery
       </a>
     </div>
 
@@ -48,8 +49,8 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
 
 <section class="jewelrySpotlight reveal">
   <div class="jewelCopy">
-    <span class="dealPill">New Jewelry Drop</span>
-    <h2>Trendy Jewelry, Delivered Fast</h2>
+    <span class="dealPill">New Jewellery Drop</span>
+    <h2>Trendy Jewellery, Delivered Fast</h2>
     <p>Necklace sets, earrings, rings, bangles and gift pieces. Add to cart and confirm your order on WhatsApp.</p>
 
     <div class="jewelPerks">
@@ -59,12 +60,12 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
     </div>
 
     <a class="jewelCta" routerLink="/jewelry">
-      Shop Jewelry Now
+      Shop Jewellery Now
       <i class="fa-solid fa-arrow-right"></i>
     </a>
   </div>
 
-  <a class="jewelShowcase" routerLink="/jewelry" aria-label="Open jewelry shop">
+  <a class="jewelShowcase" routerLink="/jewelry" aria-label="Open jewellery shop">
     <span class="jewelCard mainJewel">
       <i class="fa-solid fa-gem"></i>
       <b>Necklace Sets</b>
@@ -83,20 +84,27 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
   </a>
 </section>
 
+<section class="localLinks reveal">
+  <a routerLink="/services">Delivery Services in Kohat</a>
+  <a routerLink="/jewelry">Shop Jewellery in Kohat</a>
+  <a routerLink="/track-order">Track Your UZR Express Order</a>
+  <a routerLink="/contact">Contact UZR Express</a>
+</section>
+
 <section class="app reveal">
   <div>
     <span class="pill">NEW • UZR EXPRESS APP</span>
-    <h2>Download <span>UZR Express</span> App</h2>
-    <p>Order deliveries instantly from your mobile with live tracking and fast rider assignment.</p>
+    <h2>UZR Express App — <span>Coming Soon</span></h2>
+    <p>The UZR Express app is planned for easier delivery booking, order updates and customer support from your mobile.</p>
 
     <div class="checks">
-      <p>✓ Easy Ordering</p>
-      <p>✓ Live Tracking</p>
-      <p>✓ Multiple Payment Options</p>
-      <p>✓ Secure & Fast Delivery</p>
+      <p>✓ Planned Easy Ordering</p>
+      <p>✓ Planned Order Updates</p>
+      <p>✓ Planned Payment Options</p>
+      <p>✓ Planned Support Tools</p>
     </div>
 
-    <a class="store" routerLink="/download-app">Get App </a>
+    <a class="store" routerLink="/download-app">Get Launch Updates</a>
   </div>
 
   <div class="phones">
@@ -109,16 +117,15 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
     </div>
 
     <div class="phone main">
-      <b>Your Order is On The Way</b>
+      <b>WhatsApp Update Preview</b>
       <div class="map">🛵</div>
-      <button>Track Order</button>
+      <a routerLink="/track-order">Send Order Number</a>
     </div>
 
     <div class="phone">
-      <b>Track Order</b>
-      <p>Rider: Ahmed Khan</p>
-      <p>ETA: 15 min</p>
-      <p>⭐ 4.9</p>
+      <b>Order Update</b>
+      <p>Share your order number on WhatsApp.</p>
+      <p>Our team will reply with the latest status.</p>
     </div>
   </div>
 </section>
@@ -141,15 +148,15 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
     <h2>How It <span>Works</span></h2>
 
     <div class="steps">
-      <p><b>1</b> Send order on WhatsApp/App</p>
+      <p><b>1</b> Send order on WhatsApp</p>
       <p><b>2</b> Rider assigned instantly</p>
       <p><b>3</b> Fast delivery to destination</p>
     </div>
   </div>
 
   <div class="yellowBox">
-    <h2>Live Tracking</h2>
-    <p>Track your order in real-time from pickup to delivery.</p>
+    <h2>WhatsApp Order Updates</h2>
+    <p>Send your order number on WhatsApp and our team will reply with the latest delivery status.</p>
     <a class="btn dark" routerLink="/track-order">Track Your Order</a>
   </div>
 </section>
@@ -178,6 +185,9 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements AfterViewInit {
+  googleRating = '4.8';
+  googleReviewCount = 11;
+
   riderAnimation: AnimationOptions = {
     path: 'assets/animations/delivery-service.json.json',
     loop: true,

@@ -15,14 +15,54 @@ import { ContactComponent } from './app/pages/contact/contact.component';
 import { JewelryComponent } from './app/pages/jewelry/jewelry.component';
 
 const routes: Routes = [
-    { path: '', component: HomeComponent, title: 'UZR Express' },
-    { path: 'services', component: ServicesComponent },
-    { path: 'track-order', component: TrackOrderComponent },
-    { path: 'become-rider', component: RiderComponent },
-    { path: 'business', component: BusinessComponent },
-    { path: 'jewelry', component: JewelryComponent },
-    { path: 'download-app', component: DownloadAppComponent },
-    { path: 'contact', component: ContactComponent },
+    {
+        path: '',
+        component: HomeComponent,
+        title: 'UZR Express | Fast Delivery & Courier Service in Kohat',
+        data: { seo: { title: 'UZR Express | Fast Delivery & Courier Service in Kohat', description: 'UZR Express provides fast and reliable food, grocery, parcel, document, medicine and Jewellery delivery services across Kohat City. Order easily through WhatsApp.' } },
+    },
+    {
+        path: 'services',
+        component: ServicesComponent,
+        title: 'Delivery Services in Kohat | UZR Express',
+        data: { seo: { title: 'Delivery Services in Kohat | UZR Express', description: 'Explore food delivery, grocery delivery, parcel delivery, courier service and document delivery in Kohat City with UZR Express.' } },
+    },
+    {
+        path: 'track-order',
+        component: TrackOrderComponent,
+        title: 'Track Your Order | UZR Express Kohat',
+        data: { seo: { title: 'Track Your Order | UZR Express Kohat', description: 'Send your UZR Express order number on WhatsApp to receive the latest delivery status update from our support team.' } },
+    },
+    {
+        path: 'become-rider',
+        component: RiderComponent,
+        title: 'Become a Rider in Kohat | UZR Express',
+        data: { seo: { title: 'Become a Rider in Kohat | UZR Express', description: 'Apply to become a UZR Express rider in Kohat and earn through local delivery work.' } },
+    },
+    {
+        path: 'business',
+        component: BusinessComponent,
+        title: 'Business Delivery Partner in Kohat | UZR Express',
+        data: { seo: { title: 'Business Delivery Partner in Kohat | UZR Express', description: 'Partner your restaurant, shop or online business with UZR Express for local delivery support in Kohat.' } },
+    },
+    {
+        path: 'jewelry',
+        component: JewelryComponent,
+        title: 'Shop Jewellery Online in Kohat | UZR Express',
+        data: { seo: { title: 'Shop Jewellery Online in Kohat | UZR Express', description: 'Shop Jewellery online in Kohat with Cash on Delivery and WhatsApp order confirmation from UZR Express. Delivery charges are confirmed before order completion.' } },
+    },
+    {
+        path: 'download-app',
+        component: DownloadAppComponent,
+        title: 'UZR Express App — Coming Soon',
+        data: { seo: { title: 'UZR Express App — Coming Soon', description: 'The UZR Express app is coming soon. Get launch updates on WhatsApp for the planned iOS and Android app.' } },
+    },
+    {
+        path: 'contact',
+        component: ContactComponent,
+        title: 'Contact UZR Express | Kohat Delivery Service',
+        data: { seo: { title: 'Contact UZR Express | Kohat Delivery Service', description: 'Contact UZR Express in Kohat by WhatsApp, phone, Facebook or Instagram for delivery booking and support.' } },
+    },
 ];
 
 bootstrapApplication(AppComponent, {

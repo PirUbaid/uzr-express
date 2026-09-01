@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
        <h4>Quick Links</h4>
        <a routerLink="/">Home</a>
        <a routerLink="/services">Services</a>
-       <a routerLink="/jewelry">Jewelry Shop</a>
+       <a routerLink="/jewelry">Jewellery Shop</a>
        <a routerLink="/track-order">Track Order</a>
        <a routerLink="/become-rider">Become a Rider</a>
        </div>
@@ -28,9 +28,10 @@ import { RouterLink } from '@angular/router';
        </div>
        <div>
        <h4>Contact</h4>
-       <p>WhatsApp: 0336 8877657</p>
-       <p>Facebook: UZR Express Delivery</p>
-       <p>Instagram: uzrexpress</p>
+       <a href="https://wa.me/923368877657" target="_blank" rel="noopener noreferrer">WhatsApp: 0336 8877657</a>
+       <a href="tel:+923368877657">Phone: 0336 8877657</a>
+       <a href="https://www.facebook.com/uzrexpress/" target="_blank" rel="noopener noreferrer">Facebook: UZR Express Delivery</a>
+       <a href="https://www.instagram.com/uzrexpress/" target="_blank" rel="noopener noreferrer">Instagram: uzrexpress</a>
        <p>Near Pearl Oasis, City Centre Gate No. 1, KDA Sector 2, Kohat, Pakistan</p>
        </div>
        </footer>

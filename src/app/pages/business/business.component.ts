@@ -18,12 +18,12 @@ import { Component } from '@angular/core';
     <div class="actions">
       <a class="btn primary"
          href="https://wa.me/923368877657?text=Assalamualaikum, I want to partner my business with UZR Express"
-         target="_blank">
+         target="_blank" rel="noopener noreferrer">
         Partner on WhatsApp   <i class="fab fa-whatsapp"></i>
 
       </a>
 
-      <a class="btn secondary" href="tel:03368877657">
+      <a class="btn secondary" href="tel:+923368877657">
         Call for Details
       </a>
     </div>
@@ -102,7 +102,7 @@ import { Component } from '@angular/core';
   <p>Let UZR Express become your trusted delivery partner in Kohat.</p>
 
   <a href="https://wa.me/923368877657?text=I want to register my business with UZR Express"
-     target="_blank">
+     target="_blank" rel="noopener noreferrer">
     Become a Partner
   </a>
 </section>
