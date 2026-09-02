@@ -12,6 +12,7 @@ type SeoData = {
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly siteUrl = 'https://uzr-expresscom.vercel.app';
+  private readonly defaultImage = `${this.siteUrl}/assets/images/uzr-logo.png`;
 
   constructor(
     private readonly router: Router,
@@ -45,9 +46,14 @@ export class SeoService {
     this.meta.updateTag({ property: 'og:description', content: seo.description });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.meta.updateTag({ property: 'og:site_name', content: 'UZR Express' });
+    this.meta.updateTag({ property: 'og:locale', content: 'en_PK' });
+    this.meta.updateTag({ property: 'og:image', content: this.defaultImage });
+    this.meta.updateTag({ property: 'og:image:alt', content: 'UZR Express logo' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     this.meta.updateTag({ name: 'twitter:title', content: seo.title });
     this.meta.updateTag({ name: 'twitter:description', content: seo.description });
+    this.meta.updateTag({ name: 'twitter:image', content: this.defaultImage });
     this.updateCanonicalUrl(url);
   }
 

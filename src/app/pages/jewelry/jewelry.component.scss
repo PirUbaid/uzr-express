@@ -243,6 +243,52 @@
   line-height: 1.5;
 }
 
+.productMeta,
+.detailMeta {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.productMeta div,
+.detailMeta div {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.productMeta dt,
+.detailMeta dt {
+  color: #806000;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.productMeta dd,
+.detailMeta dd {
+  margin: 0;
+  color: #444;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.detailMeta {
+  margin-top: 18px;
+}
+
+.detailMeta div {
+  grid-template-columns: 105px 1fr;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.detailMeta dt,
+.detailMeta dd {
+  font-size: 14px;
+}
+
 .productPrice {
   display: flex;
   align-items: center;
@@ -837,10 +883,61 @@ textarea.invalid {
   color: #9a7200;
 }
 
-.ownerNeeded {
-  margin: 18px 0 0;
-  color: #555;
-  line-height: 1.6;
+.shopPolicies {
+  padding: 0 7% 70px;
+  background: #fff;
+}
+
+.shopPolicies h2 {
+  margin: 8px 0 22px;
+  color: #111;
+  font-size: 34px;
+}
+
+.policyGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.policyGrid a {
+  display: grid;
+  gap: 10px;
+  min-height: 170px;
+  align-content: start;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  padding: 18px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .12);
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.policyGrid a:hover {
+  border-color: #ffc107;
+  transform: translateY(-4px);
+}
+
+.policyGrid i {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 193, 7, .14);
+  color: #ffc107;
+}
+
+.policyGrid b {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.policyGrid span {
+  color: #d6d6d6;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .shopNow:hover,
@@ -938,6 +1035,12 @@ textarea.invalid {
     min-height: auto;
   }
 
+  .productMeta div,
+  .detailMeta div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
   .productActions {
     grid-template-columns: 1fr;
   }
@@ -985,7 +1088,12 @@ textarea.invalid {
     padding: 0 6% 45px;
   }
 
-  .infoList {
+  .shopPolicies {
+    padding: 0 6% 45px;
+  }
+
+  .infoList,
+  .policyGrid {
     grid-template-columns: 1fr;
   }
 

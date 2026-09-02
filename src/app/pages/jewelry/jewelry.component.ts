@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 type JewelryProduct = {
   id: number;
@@ -8,6 +9,10 @@ type JewelryProduct = {
   category: string;
   image?: string;
   badge?: string;
+  material?: string;
+  size?: string;
+  colour?: string;
+  availability?: string;
   description: string;
 };
 
@@ -37,7 +42,7 @@ type CheckoutDraft = {
 
 @Component({
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   template: `
 <section class="jewelryHero">
   <div class="heroCopy">
@@ -93,6 +98,14 @@ type CheckoutDraft = {
           <small>{{ product.category }}</small>
           <h3>{{ product.name }}</h3>
           <p>{{ product.description }}</p>
+          <dl class="productMeta">
+            @for (detail of productDetailRows(product); track detail.label) {
+              <div>
+                <dt>{{ detail.label }}</dt>
+                <dd>{{ detail.value }}</dd>
+              </div>
+            }
+          </dl>
           <div class="productPrice">
             <strong>{{ formatPrice(product.price) }}</strong>
           </div>
@@ -131,6 +144,14 @@ type CheckoutDraft = {
       <span class="eyebrow">{{ selectedProduct.category }}</span>
       <h2>{{ selectedProduct.name }}</h2>
       <p>{{ selectedProduct.description }}</p>
+      <dl class="detailMeta">
+        @for (detail of productDetailRows(selectedProduct); track detail.label) {
+          <div>
+            <dt>{{ detail.label }}</dt>
+            <dd>{{ detail.value }}</dd>
+          </div>
+        }
+      </dl>
       <strong>{{ formatPrice(selectedProduct.price) }}</strong>
       <div class="detailActions">
         <button class="darkAction" type="button" (click)="addToCart(selectedProduct); closeProduct()">
@@ -354,9 +375,35 @@ type CheckoutDraft = {
     <p><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</p>
     <p><i class="fa-brands fa-whatsapp"></i> WhatsApp order confirmation</p>
     <p><i class="fa-solid fa-location-dot"></i> Delivery within Kohat</p>
-    <p><i class="fa-solid fa-truck"></i> Delivery charges confirmed on WhatsApp</p>
+    <p><i class="fa-solid fa-truck"></i> Delivery charges may vary depending on distance and location.</p>
   </div>
-  <p class="ownerNeeded">Business information still required: return policy, exchange policy, warranty details, material, size, colour and stock status.</p>
+</section>
+
+<section class="shopPolicies">
+  <span class="eyebrow">Customer Information</span>
+  <h2>Helpful Details Before You Order</h2>
+  <div class="policyGrid">
+    <a routerLink="/return-exchange-policy">
+      <i class="fa-solid fa-rotate-left"></i>
+      <b>Return & Exchange Policy</b>
+      <span>Review simple return and exchange guidance before ordering.</span>
+    </a>
+    <a routerLink="/delivery-policy">
+      <i class="fa-solid fa-truck-fast"></i>
+      <b>Delivery Policy</b>
+      <span>Learn how Kohat delivery charges and timing are confirmed.</span>
+    </a>
+    <a routerLink="/privacy-policy">
+      <i class="fa-solid fa-shield-halved"></i>
+      <b>Privacy Policy</b>
+      <span>See how order and contact details are used for service support.</span>
+    </a>
+    <a routerLink="/terms-conditions">
+      <i class="fa-solid fa-file-contract"></i>
+      <b>Terms & Conditions</b>
+      <span>Understand the basic ordering terms for UZR Express services.</span>
+    </a>
+  </div>
 </section>
 `,
   styleUrls: ['./jewelry.component.scss']
@@ -501,6 +548,15 @@ export class JewelryComponent implements OnInit {
 
   formatPrice(value: number): string {
     return `Rs ${value.toLocaleString('en-PK')}`;
+  }
+
+  productDetailRows(product: JewelryProduct): Array<{ label: string; value: string }> {
+    return [
+      { label: 'Material', value: product.material || 'Details confirmed on WhatsApp' },
+      { label: 'Size', value: product.size || 'Size details confirmed before order' },
+      { label: 'Colour', value: product.colour || 'Colour options confirmed on WhatsApp' },
+      { label: 'Availability', value: product.availability || 'Confirmed before order completion' }
+    ];
   }
 
   viewProduct(product: JewelryProduct): void {

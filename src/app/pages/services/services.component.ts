@@ -129,7 +129,7 @@ import { RouterLink } from '@angular/router';
 
     <div class="faq-card">
       <h3>How can I track my UZR Express order?</h3>
-      <p>Use the <a routerLink="/track-order">Track Your UZR Express Order</a> page and send your order number on WhatsApp.</p>
+      <p>Use the <a routerLink="/track-order">Check Order Status on WhatsApp</a> page and send your order number to our support team.</p>
     </div>
 
     <div class="faq-card">
@@ -139,7 +139,7 @@ import { RouterLink } from '@angular/router';
 
     <div class="faq-card">
       <h3>How are delivery charges confirmed?</h3>
-      <p>Delivery charges are confirmed on WhatsApp before order completion.</p>
+      <p>Delivery charges may vary depending on distance and location, and are confirmed on WhatsApp before order completion.</p>
     </div>
   </div>
 </section>

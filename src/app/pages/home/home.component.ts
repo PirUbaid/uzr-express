@@ -25,12 +25,12 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
         Order Now on WhatsApp
       </a>
 
-      <a class="btn dark" routerLink="/download-app">
-        App Coming Soon
-      </a>
-
       <a class="btn yellow" routerLink="/jewelry">
         Shop Jewellery
+      </a>
+
+      <a class="btn dark" routerLink="/download-app">
+        App Coming Soon
       </a>
     </div>
 
@@ -93,8 +93,8 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
 
 <section class="app reveal">
   <div>
-    <span class="pill">NEW • UZR EXPRESS APP</span>
-    <h2>UZR Express App — <span>Coming Soon</span></h2>
+    <span class="pill">UZR EXPRESS APP</span>
+    <h2>App Updates — <span>Coming Soon</span></h2>
     <p>The UZR Express app is planned for easier delivery booking, order updates and customer support from your mobile.</p>
 
     <div class="checks">

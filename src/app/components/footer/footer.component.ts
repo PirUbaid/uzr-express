@@ -15,8 +15,15 @@ import { RouterLink } from '@angular/router';
        <a routerLink="/">Home</a>
        <a routerLink="/services">Services</a>
        <a routerLink="/jewelry">Jewellery Shop</a>
-       <a routerLink="/track-order">Track Order</a>
+       <a routerLink="/track-order">Check Order Status</a>
        <a routerLink="/become-rider">Become a Rider</a>
+       </div>
+       <div>
+       <h4>Customer Info</h4>
+       <a routerLink="/return-exchange-policy">Return & Exchange Policy</a>
+       <a routerLink="/delivery-policy">Delivery Policy</a>
+       <a routerLink="/privacy-policy">Privacy Policy</a>
+       <a routerLink="/terms-conditions">Terms & Conditions</a>
        </div>
        <div>
        <h4>Services</h4>
