@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 type JewelryProduct = {
@@ -14,6 +14,25 @@ type JewelryProduct = {
 type CartItem = {
   product: JewelryProduct;
   quantity: number;
+};
+
+type PaymentMethod = 'Cash on Delivery' | 'Online Transfer';
+
+type StoredCartItem = {
+  id: number;
+  quantity: number;
+};
+
+type StoredCart = {
+  items?: StoredCartItem[];
+  paymentMethod?: string;
+};
+
+type CheckoutDraft = {
+  customerName?: string;
+  customerPhone?: string;
+  customerAddress?: string;
+  orderNote?: string;
 };
 
 @Component({
@@ -134,9 +153,16 @@ type CartItem = {
         <span class="eyebrow">Your Cart</span>
         <h2>{{ cartItemLabel }}</h2>
       </div>
-      <button class="iconClose" type="button" aria-label="Close cart" (click)="closeCart()">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <div class="drawerActions">
+        @if (cart.length > 0) {
+          <button #startNewOrderButton class="resetOrderBtn" type="button" (click)="startNewOrder()">
+            Start New Order
+          </button>
+        }
+        <button class="iconClose" type="button" aria-label="Close cart" (click)="closeCart()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
 
     @if (cart.length === 0) {
@@ -184,8 +210,10 @@ type CartItem = {
           <input
             #nameInput
             type="text"
+            name="customerName"
             placeholder="Enter name"
-            [(ngModel)]="customerName"
+            [ngModel]="customerName"
+            (ngModelChange)="updateCustomerName($event)"
             [class.invalid]="submitted && !isCustomerNameValid"
             [attr.aria-invalid]="submitted && !isCustomerNameValid"
             aria-describedby="customerNameError"
@@ -199,9 +227,13 @@ type CartItem = {
           Phone Number
           <input
             #phoneInput
-            type="tel"
+            type="text"
+            inputmode="tel"
+            autocomplete="tel"
+            name="customerPhone"
             placeholder="03xx xxxxxxx"
             [(ngModel)]="customerPhone"
+            (input)="updateCustomerPhone(phoneInput.value)"
             [class.invalid]="submitted && !isCustomerPhoneValid"
             [attr.aria-invalid]="submitted && !isCustomerPhoneValid"
             aria-describedby="customerPhoneError"
@@ -215,9 +247,11 @@ type CartItem = {
           Delivery Address
           <textarea
             #addressInput
+            name="customerAddress"
             rows="4"
             placeholder="House / street / area"
-            [(ngModel)]="customerAddress"
+            [ngModel]="customerAddress"
+            (ngModelChange)="updateCustomerAddress($event)"
             [class.invalid]="submitted && !isCustomerAddressValid"
             [attr.aria-invalid]="submitted && !isCustomerAddressValid"
             aria-describedby="customerAddressError"
@@ -229,8 +263,46 @@ type CartItem = {
 
         <label>
           Note
-          <input type="text" placeholder="Color, size, gift packing..." [(ngModel)]="orderNote">
+          <input type="text" name="orderNote" placeholder="Color, size, gift packing..." [ngModel]="orderNote" (ngModelChange)="updateOrderNote($event)">
         </label>
+
+        <fieldset class="paymentMethod" [class.invalid]="submitted && !isPaymentMethodValid">
+          <legend>Payment Method</legend>
+          <label class="paymentOption">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="Cash on Delivery"
+              [ngModel]="paymentMethod"
+              (ngModelChange)="onPaymentMethodChange($event)"
+              required
+            >
+            <span>
+              <b>Cash on Delivery</b>
+              <small>Pay when your order is delivered.</small>
+            </span>
+          </label>
+          <label class="paymentOption">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="Online Transfer"
+              [ngModel]="paymentMethod"
+              (ngModelChange)="onPaymentMethodChange($event)"
+              required
+            >
+            <span>
+              <b>Online Transfer</b>
+              <small>JazzCash, Easypaisa, or Bank Transfer.</small>
+            </span>
+          </label>
+          @if (paymentMethod === 'Online Transfer') {
+            <p class="onlinePaymentNote">After submitting your order, payment details will be shared with you on WhatsApp. Your order will be confirmed after payment verification.</p>
+          }
+          @if (submitted && !isPaymentMethodValid) {
+            <span class="fieldError" role="alert">Please select a payment method.</span>
+          }
+        </fieldset>
 
         <button class="whatsappBtn" type="button" (click)="confirmOrder()">
           <i class="fab fa-whatsapp"></i>
@@ -239,6 +311,40 @@ type CartItem = {
       </div>
     }
   </aside>
+}
+
+@if (isStartNewOrderModalOpen) {
+  <div class="confirmBackdrop" (click)="closeStartNewOrderModal()"></div>
+  <section
+    #startNewOrderDialog
+    class="confirmDialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="startNewOrderTitle"
+    tabindex="-1"
+    (keydown.escape)="closeStartNewOrderModal()"
+  >
+    <button class="confirmClose" type="button" aria-label="Close confirmation" (click)="closeStartNewOrderModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="confirmIcon" aria-hidden="true">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+
+    <h2 id="startNewOrderTitle">Start a New Order?</h2>
+    <p>Your current cart contains {{ cartItemLabel }}. Starting a new order will clear your cart and checkout details.</p>
+    <strong>This action cannot be undone.</strong>
+
+    <div class="confirmActions">
+      <button class="keepOrderBtn" type="button" (click)="closeStartNewOrderModal()">
+        Keep Current Order
+      </button>
+      <button class="confirmResetBtn" type="button" (click)="confirmStartNewOrder()">
+        Yes, Start New Order
+      </button>
+    </div>
+  </section>
 }
 
 <section class="orderInfo">
@@ -255,11 +361,16 @@ type CartItem = {
 `,
   styleUrls: ['./jewelry.component.scss']
 })
-export class JewelryComponent {
+export class JewelryComponent implements OnInit {
+  private readonly cartStorageKey = 'uzr_express_cart';
+  private readonly checkoutDraftStorageKey = 'uzr_express_checkout_draft';
+  private readonly maxQuantity = 99;
   private readonly whatsappNumber = '923368877657';
   @ViewChild('nameInput') nameInput?: ElementRef<HTMLInputElement>;
   @ViewChild('phoneInput') phoneInput?: ElementRef<HTMLInputElement>;
   @ViewChild('addressInput') addressInput?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('startNewOrderButton') startNewOrderButton?: ElementRef<HTMLButtonElement>;
+  @ViewChild('startNewOrderDialog') startNewOrderDialog?: ElementRef<HTMLElement>;
 
   products: JewelryProduct[] = [
     {
@@ -318,11 +429,18 @@ export class JewelryComponent {
   cart: CartItem[] = [];
   selectedProduct: JewelryProduct | null = null;
   isCartOpen = false;
+  isStartNewOrderModalOpen = false;
   customerName = '';
   customerPhone = '';
   customerAddress = '';
   orderNote = '';
+  paymentMethod: PaymentMethod = 'Cash on Delivery';
   submitted = false;
+
+  ngOnInit(): void {
+    this.restoreCart();
+    this.restoreCheckoutDraft();
+  }
 
   get cartCount(): number {
     return this.cart.reduce((total, item) => total + item.quantity, 0);
@@ -348,6 +466,10 @@ export class JewelryComponent {
     return this.customerAddress.trim().length >= 8;
   }
 
+  get isPaymentMethodValid(): boolean {
+    return this.paymentMethod === 'Cash on Delivery' || this.paymentMethod === 'Online Transfer';
+  }
+
   get whatsappOrderUrl(): string {
     const items = this.cart
       .map((item, index) =>
@@ -363,6 +485,10 @@ export class JewelryComponent {
       '',
       `Subtotal: ${this.formatPrice(this.cartTotal)}`,
       'Delivery charges are not included in the subtotal and will be confirmed on WhatsApp.',
+      `Payment Method: ${this.paymentMethod || '-'}`,
+      ...(this.paymentMethod === 'Online Transfer'
+        ? ['Online payment selected. Payment will be manually verified by UZR before order confirmation.']
+        : []),
       '',
       `Name: ${this.customerName || '-'}`,
       `Phone: ${this.customerPhone || '-'}`,
@@ -391,10 +517,12 @@ export class JewelryComponent {
     const item = this.cart.find((cartItem) => cartItem.product.id === product.id);
 
     if (item) {
-      item.quantity += 1;
+      item.quantity = this.normalizeQuantity(item.quantity + 1);
     } else {
       this.cart.push({ product, quantity: 1 });
     }
+
+    this.saveCart();
   }
 
   buyNow(product: JewelryProduct): void {
@@ -417,7 +545,8 @@ export class JewelryComponent {
     const item = this.cart.find((cartItem) => cartItem.product.id === productId);
 
     if (item) {
-      item.quantity += 1;
+      item.quantity = this.normalizeQuantity(item.quantity + 1);
+      this.saveCart();
     }
   }
 
@@ -433,11 +562,81 @@ export class JewelryComponent {
       return;
     }
 
-    item.quantity -= 1;
+    item.quantity = this.normalizeQuantity(item.quantity - 1);
+    this.saveCart();
   }
 
   removeFromCart(productId: number): void {
     this.cart = this.cart.filter((item) => item.product.id !== productId);
+    this.saveCart();
+  }
+
+  updateCustomerName(value: string): void {
+    this.customerName = value;
+    this.saveCheckoutDraft();
+  }
+
+  updateCustomerPhone(value: string): void {
+    this.customerPhone = value;
+    this.saveCheckoutDraft();
+  }
+
+  updateCustomerAddress(value: string): void {
+    this.customerAddress = value;
+    this.saveCheckoutDraft();
+  }
+
+  updateOrderNote(value: string): void {
+    this.orderNote = value;
+    this.saveCheckoutDraft();
+  }
+
+  onPaymentMethodChange(value: string): void {
+    this.paymentMethod = this.normalizePaymentMethod(value);
+    this.saveCart();
+  }
+
+  startNewOrder(): void {
+    if (this.cart.length > 0) {
+      this.openStartNewOrderModal();
+      return;
+    }
+
+    this.resetCurrentOrder();
+  }
+
+  confirmStartNewOrder(): void {
+    this.resetCurrentOrder();
+    this.closeStartNewOrderModal({ restoreFocus: false });
+  }
+
+  closeStartNewOrderModal(options: { restoreFocus?: boolean } = {}): void {
+    const { restoreFocus = true } = options;
+
+    this.isStartNewOrderModalOpen = false;
+    this.updateBodyScrollLock();
+
+    if (restoreFocus) {
+      setTimeout(() => this.startNewOrderButton?.nativeElement.focus());
+    }
+  }
+
+  private openStartNewOrderModal(): void {
+    this.isStartNewOrderModalOpen = true;
+    this.updateBodyScrollLock();
+    setTimeout(() => this.startNewOrderDialog?.nativeElement.focus());
+  }
+
+  private resetCurrentOrder(): void {
+    this.cart = [];
+    this.customerName = '';
+    this.customerPhone = '';
+    this.customerAddress = '';
+    this.orderNote = '';
+    this.paymentMethod = 'Cash on Delivery';
+    this.submitted = false;
+    this.removeStoredCart();
+    this.removeCheckoutDraft();
   }
 
   confirmOrder(): void {
@@ -458,6 +657,10 @@ export class JewelryComponent {
       return;
     }
 
+    if (!this.isPaymentMethodValid) {
+      return;
+    }
+
     window.open(this.whatsappOrderUrl, '_blank', 'noopener,noreferrer');
   }
 
@@ -467,6 +670,173 @@ export class JewelryComponent {
   }
 
   private updateBodyScrollLock(): void {
-    document.body.classList.toggle('modal-open', this.isCartOpen || !!this.selectedProduct);
+    document.body.classList.toggle(
+      'modal-open',
+      this.isCartOpen || !!this.selectedProduct || this.isStartNewOrderModalOpen
+    );
+  }
+
+  private restoreCart(): void {
+    const storedCart = this.readJson<StoredCart>('local', this.cartStorageKey);
+
+    if (!storedCart) {
+      return;
+    }
+
+    this.paymentMethod = this.normalizePaymentMethod(storedCart.paymentMethod);
+
+    if (!Array.isArray(storedCart.items)) {
+      this.cart = [];
+      this.saveCart();
+      return;
+    }
+
+    const restoredItems = new Map<number, CartItem>();
+
+    storedCart.items.forEach((storedItem) => {
+      const product = this.products.find((item) => item.id === storedItem.id);
+      const quantity = this.normalizeStoredQuantity(storedItem.quantity);
+
+      if (!product || quantity === null) {
+        return;
+      }
+
+      const existingItem = restoredItems.get(product.id);
+      const updatedQuantity = existingItem ? existingItem.quantity + quantity : quantity;
+
+      restoredItems.set(product.id, {
+        product,
+        quantity: this.normalizeQuantity(updatedQuantity)
+      });
+    });
+
+    this.cart = Array.from(restoredItems.values());
+
+    this.saveCart();
+  }
+
+  private restoreCheckoutDraft(): void {
+    const draft = this.readJson<CheckoutDraft>('session', this.checkoutDraftStorageKey);
+
+    if (!draft) {
+      return;
+    }
+
+    this.customerName = typeof draft.customerName === 'string' ? draft.customerName : '';
+    this.customerPhone = typeof draft.customerPhone === 'string' ? draft.customerPhone : '';
+    this.customerAddress = typeof draft.customerAddress === 'string' ? draft.customerAddress : '';
+    this.orderNote = typeof draft.orderNote === 'string' ? draft.orderNote : '';
+  }
+
+  saveCheckoutDraft(): void {
+    this.writeJson('session', this.checkoutDraftStorageKey, {
+      customerName: this.customerName,
+      customerPhone: this.customerPhone,
+      customerAddress: this.customerAddress,
+      orderNote: this.orderNote
+    });
+  }
+
+  private saveCart(): void {
+    this.writeJson('local', this.cartStorageKey, {
+      items: this.cart.map((item) => ({
+        id: item.product.id,
+        quantity: this.normalizeQuantity(item.quantity)
+      })),
+      paymentMethod: this.paymentMethod
+    });
+  }
+
+  private normalizeQuantity(value: unknown): number {
+    const quantity = Number(value);
+
+    if (!Number.isFinite(quantity)) {
+      return 1;
+    }
+
+    return Math.min(this.maxQuantity, Math.max(1, Math.floor(quantity)));
+  }
+
+  private normalizeStoredQuantity(value: unknown): number | null {
+    const quantity = Number(value);
+
+    if (!Number.isFinite(quantity) || quantity < 1) {
+      return null;
+    }
+
+    return Math.min(this.maxQuantity, Math.floor(quantity));
+  }
+
+  private normalizePaymentMethod(value: unknown): PaymentMethod {
+    return value === 'Online Transfer' ? 'Online Transfer' : 'Cash on Delivery';
+  }
+
+  private readJson<T>(storageType: 'local' | 'session', key: string): T | null {
+    const storage = this.getStorage(storageType);
+
+    if (!storage) {
+      return null;
+    }
+
+    try {
+      const value = storage.getItem(key);
+      return value ? JSON.parse(value) as T : null;
+    } catch {
+      try {
+        storage.removeItem(key);
+      } catch {
+        // Storage may become unavailable between read and cleanup.
+      }
+
+      return null;
+    }
+  }
+
+  private writeJson(storageType: 'local' | 'session', key: string, value: unknown): void {
+    const storage = this.getStorage(storageType);
+
+    if (!storage) {
+      return;
+    }
+
+    try {
+      storage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Checkout remains usable if browser storage is full or blocked.
+    }
+  }
+
+  private removeStoredCart(): void {
+    this.removeStorageItem('local', this.cartStorageKey);
+  }
+
+  private removeCheckoutDraft(): void {
+    this.removeStorageItem('session', this.checkoutDraftStorageKey);
+  }
+
+  private removeStorageItem(storageType: 'local' | 'session', key: string): void {
+    const storage = this.getStorage(storageType);
+
+    if (!storage) {
+      return;
+    }
+
+    try {
+      storage.removeItem(key);
+    } catch {
+      // Checkout remains usable if browser storage is unavailable.
+    }
+  }
+
+  private getStorage(storageType: 'local' | 'session'): Storage | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    try {
+      return storageType === 'local' ? window.localStorage : window.sessionStorage;
+    } catch {
+      return null;
+    }
   }
 }

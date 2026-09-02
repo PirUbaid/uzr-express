@@ -109,6 +109,7 @@
     position:fixed;
     top:0;
     right:-100%;
+    z-index:2;
     width:280px;
     height:100vh;
 
@@ -135,6 +136,7 @@
   .menuOverlay{
     position:fixed;
     inset:0;
+    z-index:1;
     background:rgba(0,0,0,.45);
     border:none;
     opacity:0;
