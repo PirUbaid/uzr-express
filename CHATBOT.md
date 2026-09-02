@@ -22,6 +22,25 @@ Set these in Vercel or the hosting environment:
 
 If `AI_API_KEY` is not configured, the backend returns safe built-in UZR Express support guidance instead of crashing.
 
+## Production Debugging
+
+The API returns a friendly customer-safe fallback if the AI provider fails, but it logs safe diagnostic details in Vercel Runtime Logs. Logs include provider status, message, type, code, model, and endpoint path when available.
+
+The API must never log or return `AI_API_KEY`.
+
+Example log shape:
+
+```text
+AI provider error: {
+  status: 401,
+  message: 'Invalid API key',
+  type: 'invalid_request_error',
+  code: 'invalid_api_key',
+  model: 'gpt-4o-mini',
+  endpoint: 'https://api.openai.com/v1/chat/completions'
+}
+```
+
 ## Current Tools
 
 No database, payment gateway, rider tracking, or live order-status tool is connected in this implementation.

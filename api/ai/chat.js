@@ -2,6 +2,8 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 20;
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_HISTORY_ITEMS = 8;
+const DEFAULT_AI_MODEL = 'gpt-4o-mini';
+const DEFAULT_AI_API_BASE_URL = 'https://api.openai.com/v1/chat/completions';
 const rateLimitStore = new Map();
 
 const SYSTEM_PROMPT = `
@@ -58,7 +60,9 @@ module.exports = async function handler(req, res) {
   const conversationId = sanitizeConversationId(parsedBody.conversationId);
   const history = sanitizeHistory(parsedBody.messages);
 
-  if (!process.env.AI_API_KEY) {
+  const aiConfig = getAiConfig();
+
+  if (!aiConfig.apiKey) {
     return res.status(200).json({
       reply: buildFallbackReply(message),
       conversationId,
@@ -66,13 +70,15 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const reply = await requestAiReply(message, history);
+    const reply = await requestAiReply(message, history, aiConfig);
 
     return res.status(200).json({
       reply: reply || buildFallbackReply(message),
       conversationId,
     });
-  } catch {
+  } catch (error) {
+    logAiProviderError(error);
+
     return res.status(200).json({
       reply: 'I am having trouble connecting right now. Please try again, or contact UZR Express support on WhatsApp for immediate help.',
       conversationId,
@@ -165,21 +171,52 @@ function sanitizeHistory(value) {
     .slice(-MAX_HISTORY_ITEMS);
 }
 
-async function requestAiReply(message, history) {
-  const apiBaseUrl = process.env.AI_API_BASE_URL || 'https://api.openai.com/v1/chat/completions';
-  const model = process.env.AI_MODEL || 'gpt-4o-mini';
+function getAiConfig() {
+  return {
+    apiKey: (process.env.AI_API_KEY || '').trim(),
+    model: (process.env.AI_MODEL || DEFAULT_AI_MODEL).trim() || DEFAULT_AI_MODEL,
+    apiBaseUrl: normalizeChatCompletionsUrl(process.env.AI_API_BASE_URL),
+  };
+}
+
+function normalizeChatCompletionsUrl(value) {
+  const rawUrl = (value || DEFAULT_AI_API_BASE_URL).trim() || DEFAULT_AI_API_BASE_URL;
+
+  try {
+    const url = new URL(rawUrl);
+    const normalizedPath = url.pathname.replace(/\/+$/, '');
+
+    if (normalizedPath === '/v1') {
+      url.pathname = '/v1/chat/completions';
+    } else if (normalizedPath === '/v1/chat') {
+      url.pathname = '/v1/chat/completions';
+    } else {
+      url.pathname = normalizedPath || '/v1/chat/completions';
+    }
+
+    return url.toString();
+  } catch {
+    console.error('AI provider configuration error:', {
+      message: 'AI_API_BASE_URL is not a valid URL. Falling back to the default Chat Completions endpoint.',
+    });
+    return DEFAULT_AI_API_BASE_URL;
+  }
+}
+
+async function requestAiReply(message, history, config) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const response = await fetch(apiBaseUrl, {
+    const response = await fetch(config.apiBaseUrl, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.AI_API_KEY}`,
+        Authorization: `Bearer ${config.apiKey}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model,
+        model: config.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           ...history,
@@ -192,14 +229,147 @@ async function requestAiReply(message, history) {
     });
 
     if (!response.ok) {
-      throw new Error('AI provider request failed');
+      const providerBody = await readProviderBody(response);
+      throw createAiProviderError({
+        status: response.status,
+        statusText: response.statusText,
+        providerBody,
+        model: config.model,
+        endpoint: config.apiBaseUrl,
+      });
     }
 
     const data = await response.json();
-    return data?.choices?.[0]?.message?.content?.trim() || '';
+    const reply = data?.choices?.[0]?.message?.content?.trim() || '';
+
+    if (!reply) {
+      throw createAiProviderError({
+        status: response.status,
+        statusText: 'OK',
+        providerBody: data,
+        model: config.model,
+        endpoint: config.apiBaseUrl,
+        fallbackMessage: 'Provider returned no assistant message content.',
+      });
+    }
+
+    return reply;
+  } catch (error) {
+    if (error?.name === 'AbortError') {
+      throw createAiProviderError({
+        status: 'timeout',
+        statusText: 'Request timed out',
+        providerBody: { error: { message: 'AI provider request timed out after 15 seconds.' } },
+        model: config.model,
+        endpoint: config.apiBaseUrl,
+      });
+    }
+
+    if (error?.isAiProviderError) {
+      throw error;
+    }
+
+    throw createAiProviderError({
+      status: 'network',
+      statusText: 'Network or runtime error',
+      providerBody: { error: { message: error?.message || 'Unknown AI provider request failure.' } },
+      model: config.model,
+      endpoint: config.apiBaseUrl,
+    });
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function readProviderBody(response) {
+  const text = await response.text();
+
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+function createAiProviderError({
+  status,
+  statusText,
+  providerBody,
+  model,
+  endpoint,
+  fallbackMessage,
+}) {
+  const providerError = extractProviderError(providerBody);
+  const error = new Error(
+    fallbackMessage ||
+      providerError.message ||
+      statusText ||
+      'AI provider request failed.'
+  );
+
+  error.isAiProviderError = true;
+  error.status = status;
+  error.statusText = statusText;
+  error.providerMessage = fallbackMessage || providerError.message || statusText || '';
+  error.providerType = providerError.type || '';
+  error.providerCode = providerError.code || '';
+  error.requestId = providerError.requestId || '';
+  error.model = model;
+  error.endpoint = safeEndpointLabel(endpoint);
+
+  return error;
+}
+
+function extractProviderError(providerBody) {
+  if (!providerBody) {
+    return {};
+  }
+
+  if (typeof providerBody === 'string') {
+    return {
+      message: redactSecrets(providerBody).slice(0, 700),
+    };
+  }
+
+  const error = providerBody.error || providerBody;
+
+  return {
+    message: redactSecrets(String(error.message || error.error || '')),
+    type: redactSecrets(String(error.type || '')),
+    code: redactSecrets(String(error.code || '')),
+    requestId: redactSecrets(String(providerBody.request_id || providerBody.requestId || '')),
+  };
+}
+
+function logAiProviderError(error) {
+  console.error('AI provider error:', {
+    status: error?.status || 'unknown',
+    message: redactSecrets(error?.providerMessage || error?.message || 'Unknown AI provider error.'),
+    type: redactSecrets(error?.providerType || ''),
+    code: redactSecrets(error?.providerCode || ''),
+    requestId: redactSecrets(error?.requestId || ''),
+    model: redactSecrets(error?.model || ''),
+    endpoint: redactSecrets(error?.endpoint || ''),
+  });
+}
+
+function safeEndpointLabel(endpoint) {
+  try {
+    const url = new URL(endpoint);
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return 'invalid endpoint';
+  }
+}
+
+function redactSecrets(value) {
+  return String(value)
+    .replace(/sk-[a-zA-Z0-9_-]+/g, '[redacted]')
+    .replace(/Bearer\s+[a-zA-Z0-9._-]+/gi, 'Bearer [redacted]');
 }
 
 function createConversationId() {
