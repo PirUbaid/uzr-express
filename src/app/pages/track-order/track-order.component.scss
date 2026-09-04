@@ -198,3 +198,53 @@
     width: 100%;
   }
 }
+
+@media (max-width: 560px) {
+  .track-hero,
+  .tracking-info,
+  .track-cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .track-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .track-box {
+    display: grid;
+  }
+
+  .track-box button {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .status-card,
+  .info-card {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .status-card h3,
+  .tracking-info h2,
+  .track-cta h2 {
+    font-size: clamp(28px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .status {
+    gap: 12px;
+  }
+
+  .track-cta a {
+    width: 100%;
+    text-align: center;
+  }
+}

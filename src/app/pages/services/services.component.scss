@@ -234,3 +234,50 @@
     }
   }
 }
+
+@media (max-width: 560px) {
+  .services-hero,
+  .service-list,
+  .how-book,
+  .faq-section,
+  .services-cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .services-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .service-list h2,
+  .how-book h2,
+  .faq-section h2,
+  .services-cta h2 {
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .hero-card,
+  .service-card,
+  .step,
+  .faq-card {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .hero-card h3 {
+    font-size: 25px;
+  }
+
+  .hero-btn,
+  .services-cta a {
+    width: 100%;
+    text-align: center;
+  }
+}

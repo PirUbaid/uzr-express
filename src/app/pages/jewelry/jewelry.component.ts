@@ -1,20 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-type JewelryProduct = {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  image?: string;
-  badge?: string;
-  material?: string;
-  size?: string;
-  colour?: string;
-  availability?: string;
-  description: string;
-};
+import { JEWELRY_PRODUCTS, JewelryProduct, JewelryProductImage } from '../../data/jewelry-products';
 
 type CartItem = {
   product: JewelryProduct;
@@ -87,8 +74,12 @@ type CheckoutDraft = {
           @if (product.badge) {
             <span class="badge">{{ product.badge }}</span>
           }
-          @if (product.image) {
-            <img [src]="product.image" [alt]="product.name">
+          @if (mainProductImage(product); as image) {
+            @if (!isMissingImage(image.src)) {
+              <img [src]="image.src" [alt]="image.alt" loading="lazy" decoding="async" (error)="markMissingImage(image.src)">
+            } @else {
+              <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
+            }
           } @else {
             <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
           }
@@ -127,16 +118,64 @@ type CheckoutDraft = {
 
 @if (selectedProduct) {
   <div class="overlay" (click)="closeProduct()"></div>
-  <section class="productDialog" role="dialog" aria-label="Product detail">
+  <section
+    #productDialog
+    class="productDialog"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Product detail"
+    tabindex="-1"
+    (keydown.arrowleft)="showPreviousImage()"
+    (keydown.arrowright)="showNextImage()"
+    (keydown.escape)="closeProduct()"
+  >
     <button class="iconClose" type="button" aria-label="Close product detail" (click)="closeProduct()">
       <i class="fa-solid fa-xmark"></i>
     </button>
 
-    <div class="detailPhoto">
-      @if (selectedProduct.image) {
-        <img [src]="selectedProduct.image" [alt]="selectedProduct.name">
+    <div
+      class="detailGallery"
+      (touchstart)="onGalleryTouchStart($event)"
+      (touchend)="onGalleryTouchEnd($event)"
+    >
+      <div class="detailPhoto">
+      @if (selectedGalleryImage; as image) {
+        @if (!isMissingImage(image.src)) {
+          <img [src]="image.src" [alt]="image.alt" (error)="markMissingImage(image.src)">
+        } @else {
+          <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
+        }
       } @else {
         <span class="photoFallback"><i class="fa-solid fa-gem"></i><small>Photo coming soon</small></span>
+      }
+        @if (hasMultipleSelectedImages) {
+          <button class="galleryNav galleryNav--prev" type="button" aria-label="Previous product image" (click)="showPreviousImage()">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="galleryNav galleryNav--next" type="button" aria-label="Next product image" (click)="showNextImage()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        }
+      </div>
+
+      @if (hasMultipleSelectedImages) {
+        <div class="galleryThumbs" aria-label="Product image thumbnails">
+          @for (image of selectedProduct.images; track image.src; let index = $index) {
+            <button
+              type="button"
+              [class.is-active]="index === selectedImageIndex"
+              [attr.aria-label]="'Show image ' + (index + 1) + ' of ' + selectedProduct.images.length"
+              [attr.aria-current]="index === selectedImageIndex ? 'true' : null"
+              (click)="selectGalleryImage(index)"
+            >
+              @if (!isMissingImage(image.src)) {
+                <img [src]="image.src" [alt]="image.alt" (error)="markMissingImage(image.src)">
+              } @else {
+                <i class="fa-solid fa-gem"></i>
+              }
+            </button>
+          }
+        </div>
       }
     </div>
 
@@ -197,8 +236,12 @@ type CheckoutDraft = {
         @for (item of cart; track item.product.id) {
           <div class="cartItem">
             <span class="cartPhoto">
-              @if (item.product.image) {
-                <img [src]="item.product.image" [alt]="item.product.name">
+              @if (mainProductImage(item.product); as image) {
+                @if (!isMissingImage(image.src)) {
+                  <img [src]="image.src" [alt]="image.alt" (error)="markMissingImage(image.src)">
+                } @else {
+                  <i class="fa-solid fa-gem"></i>
+                }
               } @else {
                 <i class="fa-solid fa-gem"></i>
               }
@@ -418,63 +461,13 @@ export class JewelryComponent implements OnInit {
   @ViewChild('addressInput') addressInput?: ElementRef<HTMLTextAreaElement>;
   @ViewChild('startNewOrderButton') startNewOrderButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('startNewOrderDialog') startNewOrderDialog?: ElementRef<HTMLElement>;
+  @ViewChild('productDialog') productDialog?: ElementRef<HTMLElement>;
 
-  products: JewelryProduct[] = [
-    {
-      id: 1,
-      name: 'Elegant Necklace Set',
-      price: 2500,
-      category: 'Necklace',
-      badge: 'Popular',
-      image: '',
-      description: 'A polished necklace set for parties, gifting, and everyday styling.'
-    },
-    {
-      id: 2,
-      name: 'Gold Plated Earrings',
-      price: 1200,
-      category: 'Earrings',
-      badge: 'New',
-      image: '',
-      description: 'Lightweight gold plated earrings with a clean premium finish.'
-    },
-    {
-      id: 3,
-      name: 'Classic Bracelet',
-      price: 1500,
-      category: 'Bracelet',
-      image: '',
-      description: 'Simple bracelet design that pairs well with daily and formal looks.'
-    },
-    {
-      id: 4,
-      name: 'Party Ring',
-      price: 900,
-      category: 'Ring',
-      image: '',
-      description: 'Statement ring with a bright finish for casual and party wear.'
-    },
-    {
-      id: 5,
-      name: 'Bridal Bangles',
-      price: 3200,
-      category: 'Bangles',
-      badge: 'Hot',
-      image: '',
-      description: 'Detailed bangles set for bridal, festive, and gift orders.'
-    },
-    {
-      id: 6,
-      name: 'Pearl Jewellery Set',
-      price: 2800,
-      category: 'Set',
-      image: '',
-      description: 'Soft pearl-style set with a graceful look for events and gifts.'
-    }
-  ];
+  products: JewelryProduct[] = JEWELRY_PRODUCTS;
 
   cart: CartItem[] = [];
   selectedProduct: JewelryProduct | null = null;
+  selectedImageIndex = 0;
   isCartOpen = false;
   isStartNewOrderModalOpen = false;
   customerName = '';
@@ -483,6 +476,8 @@ export class JewelryComponent implements OnInit {
   orderNote = '';
   paymentMethod: PaymentMethod = 'Cash on Delivery';
   submitted = false;
+  private missingImageSources = new Set<string>();
+  private galleryTouchStartX: number | null = null;
 
   ngOnInit(): void {
     this.restoreCart();
@@ -499,6 +494,18 @@ export class JewelryComponent implements OnInit {
 
   get cartTotal(): number {
     return this.cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  }
+
+  get selectedGalleryImage(): JewelryProductImage | null {
+    if (!this.selectedProduct) {
+      return null;
+    }
+
+    return this.selectedProduct.images[this.selectedImageIndex] || this.mainProductImage(this.selectedProduct);
+  }
+
+  get hasMultipleSelectedImages(): boolean {
+    return (this.selectedProduct?.images.length || 0) > 1;
   }
 
   get isCustomerNameValid(): boolean {
@@ -559,14 +566,95 @@ export class JewelryComponent implements OnInit {
     ];
   }
 
+  mainProductImage(product: JewelryProduct): JewelryProductImage | null {
+    return product.images[0] || null;
+  }
+
+  isMissingImage(src: string): boolean {
+    return this.missingImageSources.has(src);
+  }
+
+  markMissingImage(src: string): void {
+    this.missingImageSources.add(src);
+  }
+
   viewProduct(product: JewelryProduct): void {
     this.selectedProduct = product;
+    this.selectedImageIndex = 0;
     this.updateBodyScrollLock();
+    setTimeout(() => this.productDialog?.nativeElement.focus());
   }
 
   closeProduct(): void {
     this.selectedProduct = null;
+    this.selectedImageIndex = 0;
     this.updateBodyScrollLock();
+  }
+
+  selectGalleryImage(index: number): void {
+    if (!this.selectedProduct) {
+      return;
+    }
+
+    this.selectedImageIndex = Math.min(
+      this.selectedProduct.images.length - 1,
+      Math.max(0, index)
+    );
+  }
+
+  showPreviousImage(): void {
+    if (!this.hasMultipleSelectedImages || !this.selectedProduct) {
+      return;
+    }
+
+    this.selectedImageIndex =
+      (this.selectedImageIndex - 1 + this.selectedProduct.images.length) %
+      this.selectedProduct.images.length;
+  }
+
+  showNextImage(): void {
+    if (!this.hasMultipleSelectedImages || !this.selectedProduct) {
+      return;
+    }
+
+    this.selectedImageIndex = (this.selectedImageIndex + 1) % this.selectedProduct.images.length;
+  }
+
+  onGalleryTouchStart(event: TouchEvent): void {
+    this.galleryTouchStartX = event.changedTouches[0]?.clientX ?? null;
+  }
+
+  onGalleryTouchEnd(event: TouchEvent): void {
+    if (this.galleryTouchStartX === null || !this.hasMultipleSelectedImages) {
+      return;
+    }
+
+    const endX = event.changedTouches[0]?.clientX ?? this.galleryTouchStartX;
+    const deltaX = endX - this.galleryTouchStartX;
+    this.galleryTouchStartX = null;
+
+    if (Math.abs(deltaX) < 42) {
+      return;
+    }
+
+    deltaX < 0 ? this.showNextImage() : this.showPreviousImage();
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.isStartNewOrderModalOpen) {
+      this.closeStartNewOrderModal();
+      return;
+    }
+
+    if (this.selectedProduct) {
+      this.closeProduct();
+      return;
+    }
+
+    if (this.isCartOpen) {
+      this.closeCart();
+    }
   }
 
   addToCart(product: JewelryProduct): void {

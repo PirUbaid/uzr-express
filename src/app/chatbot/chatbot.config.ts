@@ -1,6 +1,5 @@
 export const CHATBOT_CONFIG = {
   enabled: true,
-  endpoint: '/api/ai/chat',
   supportWhatsAppUrl:
     'https://wa.me/923368877657?text=Assalamualaikum%2C%20I%20need%20help%20from%20UZR%20Express%20support.',
   routes: {

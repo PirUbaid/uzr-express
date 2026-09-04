@@ -152,3 +152,45 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 560px) {
+  .rider-hero,
+  .requirements,
+  .cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .rider-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .requirements h2,
+  .cta h2 {
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .rider-card,
+  .card {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .rider-card h3 {
+    font-size: 25px;
+  }
+
+  .btn,
+  .cta a {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}

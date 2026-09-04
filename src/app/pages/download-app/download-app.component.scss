@@ -167,3 +167,46 @@
     }
   }
 }
+
+@media (max-width: 560px) {
+  .app-hero,
+  .features-section,
+  .app-cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .app-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .features-section h2,
+  .app-cta h2 {
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .app-card,
+  .status-box,
+  .feature-card {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .app-card h3 {
+    font-size: 25px;
+  }
+
+  .btn,
+  .app-cta a {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}
