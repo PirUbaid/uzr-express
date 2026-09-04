@@ -49,8 +49,8 @@ const routes: Routes = [
     {
         path: 'jewelry',
         component: JewelryComponent,
-        title: 'Shop Jewellery Online in Kohat | UZR Express',
-        data: { seo: { title: 'Shop Jewellery Online in Kohat | UZR Express', description: 'Shop Jewellery online in Kohat with Cash on Delivery and WhatsApp order confirmation from UZR Express. Delivery charges are confirmed before order completion.' } },
+        title: 'Jewellery Sets, Pendant & Watch in Kohat | UZR Express',
+        data: { seo: { title: 'Jewellery Sets, Pendant & Watch in Kohat | UZR Express', description: 'Shop UZR Express jewellery sets, a gold-tone pendant and a gold-tone watch in Kohat with Cash on Delivery and WhatsApp order confirmation.' } },
     },
     {
         path: 'download-app',

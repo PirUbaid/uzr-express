@@ -204,3 +204,49 @@
   color:#e6e6e6;
   line-height:1.6;
 }
+
+@media (max-width: 560px) {
+  .contact-hero,
+  .support-section,
+  .contact-cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .contact-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .support-section h2,
+  .contact-cta h2 {
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .contact-card,
+  .support-card {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .contact-card h3 {
+    font-size: 25px;
+  }
+
+  .contact-row,
+  .contact-item {
+    gap: 12px;
+  }
+
+  .btn,
+  .contact-cta a {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -19,11 +19,18 @@
     0 10px 30px rgba(0,0,0,.22);
 
   transition: .35s ease;
+  min-width: 0;
 }
 
 /* logo */
+.brand {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
 .brand img{
   height:42px;
+  max-width: min(180px, 48vw);
   object-fit:contain;
 }
 
@@ -32,6 +39,7 @@
   display:flex;
   align-items:center;
   gap:32px;
+  min-width:0;
 }
 
 .links a{
@@ -98,20 +106,25 @@
 @media (max-width: 900px){
 
   .nav{
-    padding:14px 18px;
+    padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+    gap: 12px;
   }
 
   .menuBtn{
     display:flex;
+    flex: 0 0 52px;
+    min-width: 52px;
   }
 
   .links{
     position:fixed;
     top:0;
-    right:-100%;
+    left:auto;
+    right:0;
     z-index:2;
-    width:280px;
-    height:100vh;
+    width:min(300px, calc(100vw - 40px));
+    height:100dvh;
+    max-height:100dvh;
 
     background: rgba(10,10,10,.92);
     backdrop-filter: blur(18px);
@@ -119,18 +132,27 @@
     flex-direction:column;
     align-items:flex-start;
 
-    padding:100px 30px;
+    padding: max(92px, calc(76px + env(safe-area-inset-top))) 24px calc(24px + env(safe-area-inset-bottom));
     gap:24px;
+    overflow-y:auto;
+    transform:translateX(105%);
+    visibility:hidden;
+    pointer-events:none;
 
-    transition:.4s ease;
+    transition:transform .3s ease, visibility .3s ease;
   }
 
   .links.open{
-    right:0;
+    transform:translateX(0);
+    visibility:visible;
+    pointer-events:auto;
   }
 
   .links a{
+    width:100%;
     font-size:18px;
+    line-height:1.35;
+    overflow-wrap:anywhere;
   }
 
   .menuOverlay{
@@ -147,5 +169,33 @@
   .menuOverlay.open{
     opacity:1;
     visibility:visible;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand img {
+    height: 38px;
+    max-width: 142px;
+  }
+
+  .menuBtn {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+  }
+
+  .links {
+    width: min(292px, calc(100vw - 28px));
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .links,
+  .links a,
+  .links a::after {
+    transition: none;
   }
 }

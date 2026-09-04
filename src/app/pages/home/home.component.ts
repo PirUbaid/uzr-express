@@ -51,7 +51,7 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
   <div class="jewelCopy">
     <span class="dealPill">New Jewellery Drop</span>
     <h2>Trendy Jewellery, Delivered Fast</h2>
-    <p>Necklace sets, earrings, rings, bangles and gift pieces. Add to cart and confirm your order on WhatsApp.</p>
+    <p>Jewellery sets, a gold-tone pendant and a gold-tone watch. Add to cart and confirm your order on WhatsApp.</p>
 
     <div class="jewelPerks">
       <b><i class="fa-solid fa-bag-shopping"></i> Add to Cart</b>
@@ -68,13 +68,13 @@ import { LottieComponent, AnimationOptions } from 'ngx-lottie';
   <a class="jewelShowcase" routerLink="/jewelry" aria-label="Open jewellery shop">
     <span class="jewelCard mainJewel">
       <i class="fa-solid fa-gem"></i>
-      <b>Necklace Sets</b>
-      <small>From Rs 2,500</small>
+      <b>Jewellery Sets</b>
+      <small>From Rs 498</small>
     </span>
     <span class="jewelCard">
       <i class="fa-solid fa-ring"></i>
-      <b>Rings</b>
-      <small>Party wear</small>
+      <b>Pendant</b>
+      <small>Rs 499</small>
     </span>
     <span class="jewelCard">
       <i class="fa-solid fa-gift"></i>

@@ -2,78 +2,42 @@
 
 ## Architecture
 
-The chatbot is implemented as a safe frontend widget plus a Vercel serverless API endpoint.
+The chatbot is a free local FAQ assistant that runs inside the Angular frontend.
 
 - Frontend widget: `src/app/components/chatbot/chatbot.component.ts`
 - Frontend styles: `src/app/components/chatbot/chatbot.component.scss`
-- Frontend API client: `src/app/services/chatbot.service.ts`
+- Local matcher service: `src/app/services/chatbot.service.ts`
 - Frontend config: `src/app/chatbot/chatbot.config.ts`
-- Backend endpoint: `api/ai/chat.js`
+- Types: `src/app/chatbot/chatbot.models.ts`
+- Knowledge base: `src/app/chatbot/chatbot-knowledge-base.ts`
 
-The Angular app never stores or exposes an AI API key. The browser sends messages to `POST /api/ai/chat`, and the serverless function calls the configured AI provider from the backend.
+The assistant does not call any external provider. It does not use API keys, serverless chat endpoints, paid models, or a database.
 
-## Environment Variables
+## Behaviour
 
-Set these in Vercel or the hosting environment:
+- Responses are selected locally with normalized keyword and phrase matching.
+- English, Urdu terms, Roman Urdu, common spelling mistakes, and common synonyms are supported.
+- The widget stores open/closed state and the latest conversation in `localStorage` under `uzr_chatbot_v1`.
+- Stored chatbot data is validated before use, limited to the latest 50 messages, and ignored safely if corrupted or unavailable.
+- New Chat shows a custom UZR-themed confirmation modal before clearing chatbot history.
+- New Chat clears only chatbot storage; it does not clear cart, checkout draft, payment method, or WhatsApp order data.
+- The assistant shows route and WhatsApp actions for common support flows.
+- It uses a short simulated typing indicator and does not falsely claim to be generative AI.
 
-- `AI_API_KEY`: required for live AI responses.
-- `AI_MODEL`: optional model name. Defaults to `gpt-4o-mini`.
-- `AI_API_BASE_URL`: optional OpenAI-compatible chat completions URL. Defaults to `https://api.openai.com/v1/chat/completions`.
+## Current Knowledge
 
-If `AI_API_KEY` is not configured, the backend returns safe built-in UZR Express support guidance instead of crashing.
+The assistant can answer about:
 
-## Production Debugging
+- UZR Express and Kohat City delivery service
+- Food, grocery, parcel, document, medicine, gift and jewellery delivery
+- Delivery coverage, charges and timing
+- Jewellery products and current website prices
+- Orders, tracking, Cash on Delivery and manual Online Transfer
+- Office address, contact number and WhatsApp support
+- Rider applications, business partnerships and policy pages
 
-The API returns a friendly customer-safe fallback if the AI provider fails, but it logs safe diagnostic details in Vercel Runtime Logs. Logs include provider status, message, type, code, model, and endpoint path when available.
+For order-specific status, exact delivery charges, current availability, business hours or manual payment verification, it directs customers to UZR Express WhatsApp support at `0336 8877657`.
 
-The API must never log or return `AI_API_KEY`.
+## Future Changes
 
-Example log shape:
-
-```text
-AI provider error: {
-  status: 401,
-  message: 'Invalid API key',
-  type: 'invalid_request_error',
-  code: 'invalid_api_key',
-  model: 'gpt-4o-mini',
-  endpoint: 'https://api.openai.com/v1/chat/completions'
-}
-```
-
-## Current Tools
-
-No database, payment gateway, rider tracking, or live order-status tool is connected in this implementation.
-
-The assistant is instructed not to invent:
-
-- Product prices
-- Delivery charges
-- Exact delivery times
-- Order status
-- Payment status
-- Private customer details
-
-For live order status, payment confirmation, and exact delivery charges, it directs customers to UZR Express WhatsApp support.
-
-## Adding Future Backend Tools
-
-Future tools should be added only on the server side inside `api/ai/chat.js` or another backend route. Good candidates are:
-
-- Product availability lookup
-- Order status lookup
-- Delivery area and charge lookup
-- Human support ticket or CRM handoff
-
-Do not call private APIs directly from Angular. Keep keys and service credentials in backend environment variables only.
-
-## Frontend Behaviour
-
-- Floating bottom-right UZR Assistant button.
-- Quick actions for ordering, tracking, delivery information, services, and support.
-- Conversation memory is kept only in component state while the widget is open.
-- New Chat clears only chatbot messages.
-- Closing or minimizing the chatbot does not affect cart, checkout data, payment method, or WhatsApp ordering.
-- Talk to Support opens the existing UZR WhatsApp support flow.
-
-To disable the widget, set `enabled: false` in `src/app/chatbot/chatbot.config.ts`.
+Keep the chatbot local unless the business explicitly chooses to add a backend service later. Do not add paid AI providers, payment gateways, secrets or private APIs to the frontend.

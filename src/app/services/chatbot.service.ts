@@ -1,62 +1,84 @@
 import { Injectable } from '@angular/core';
-import { CHATBOT_CONFIG } from '../chatbot/chatbot.config';
-
-export type ChatRole = 'user' | 'assistant';
-
-export interface ChatbotHistoryItem {
-  role: ChatRole;
-  content: string;
-}
-
-export interface ChatbotReply {
-  reply: string;
-  conversationId: string;
-}
+import {
+  CHATBOT_FALLBACK_REPLY,
+  CHATBOT_INTENTS,
+  CHATBOT_SYNONYMS,
+  UZR_SUPPORT_WHATSAPP_URL,
+} from '../chatbot/chatbot-knowledge-base';
+import { ChatbotHistoryItem, ChatbotIntent, ChatbotReply } from '../chatbot/chatbot.models';
 
 @Injectable({ providedIn: 'root' })
 export class ChatbotService {
-  async sendMessage(
+  sendMessage(
     message: string,
     conversationId: string,
-    history: ChatbotHistoryItem[]
-  ): Promise<ChatbotReply> {
-    let timeoutId = 0;
+    _history: ChatbotHistoryItem[]
+  ): ChatbotReply {
+    const normalizedMessage = this.normalizeMessage(message);
+    const tokens = this.tokenize(normalizedMessage);
+    const intent = this.findBestIntent(normalizedMessage, tokens);
 
-    const request = fetch(CHATBOT_CONFIG.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message,
+    if (!intent) {
+      return {
+        reply: CHATBOT_FALLBACK_REPLY,
         conversationId,
-        messages: history.slice(-8),
-      }),
-    });
-
-    const timeout = new Promise<Response>((_, reject) => {
-      timeoutId = window.setTimeout(() => {
-        reject(new Error('Chatbot request timed out'));
-      }, 12000);
-    });
-
-    const response = await Promise.race([request, timeout]).finally(() =>
-      window.clearTimeout(timeoutId)
-    );
-
-    if (!response.ok) {
-      throw new Error('Chatbot request failed');
-    }
-
-    const data = (await response.json()) as Partial<ChatbotReply>;
-
-    if (!data.reply || !data.conversationId) {
-      throw new Error('Chatbot response was incomplete');
+        actions: [{ label: 'Contact WhatsApp', url: UZR_SUPPORT_WHATSAPP_URL }],
+      };
     }
 
     return {
-      reply: data.reply,
-      conversationId: data.conversationId,
+      reply: intent.reply,
+      conversationId,
+      actions: intent.actions,
     };
+  }
+
+  private findBestIntent(message: string, tokens: string[]): ChatbotIntent | null {
+    let bestIntent: ChatbotIntent | null = null;
+    let bestScore = 0;
+
+    for (const intent of CHATBOT_INTENTS) {
+      let score = 0;
+
+      Object.entries(intent.keywords).forEach(([keyword, weight]) => {
+        if (tokens.includes(keyword)) {
+          score += weight;
+        }
+
+        const synonyms = CHATBOT_SYNONYMS[keyword] || [];
+        if (synonyms.some((synonym) => tokens.includes(synonym))) {
+          score += Math.max(1, weight - 1);
+        }
+      });
+
+      (intent.phrases || []).forEach((phrase) => {
+        if (message.includes(this.normalizeMessage(phrase))) {
+          score += 6;
+        }
+      });
+
+      if (score >= bestScore) {
+        bestScore = score;
+        bestIntent = intent;
+      }
+    }
+
+    if (!bestIntent || bestScore < (bestIntent.threshold || 4)) {
+      return null;
+    }
+
+    return bestIntent;
+  }
+
+  private normalizeMessage(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s/+-]/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private tokenize(value: string): string[] {
+    return value.split(' ').filter(Boolean);
   }
 }

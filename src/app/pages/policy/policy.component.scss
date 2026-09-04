@@ -104,3 +104,14 @@
     padding: 20px;
   }
 }
+
+@media (max-width: 360px) {
+  .policyHero h1 {
+    font-size: 32px;
+  }
+
+  .policyContent article,
+  .policyNote {
+    padding: 18px;
+  }
+}

@@ -188,3 +188,47 @@
     }
   }
 }
+
+@media (max-width: 560px) {
+  .business-hero,
+  .business-benefits,
+  .partner-steps,
+  .business-cta {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .business-hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 46px;
+
+    h1 {
+      font-size: clamp(32px, 10vw, 42px);
+    }
+  }
+
+  .business-benefits h2,
+  .partner-steps h2,
+  .business-cta h2 {
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.12;
+  }
+
+  .partner-card,
+  .benefit-card,
+  .step {
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .partner-card h3 {
+    font-size: 25px;
+  }
+
+  .btn,
+  .business-cta a {
+    width: 100%;
+    text-align: center;
+  }
+}
