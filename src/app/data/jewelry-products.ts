@@ -125,8 +125,7 @@ export const JEWELRY_PRODUCTS: JewelryProduct[] = [
     material: 'Gold-tone watch finish',
     colour: 'Gold-tone',
     description: 'Gold-tone watch with multiple product and wrist views for easy WhatsApp ordering.',
-  },
-  {
+  }, {
     id: 7,
     name: 'Black Jewellery Set',
     price: 499,
