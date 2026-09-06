@@ -54,6 +54,22 @@ export const JEWELRY_PRODUCTS: JewelryProduct[] = [
     description: 'Blue jewellery set with matching stone-style details for a bright coordinated look.',
   },
   {
+    id: 7,
+    name: 'Black Jewellery Set',
+    price: 499,
+    category: 'Jewellery Set',
+    badge: 'New',
+    images: [
+      {
+        src: 'assets/images/jewelry/black-set/main.jpeg',
+        alt: 'Silver-tone jewellery set with polished black centre stones',
+      },
+    ],
+    material: 'Silver-tone finish with black stone details',
+    colour: 'Black and silver-tone',
+    description: 'Silver-tone geometric necklace and matching earrings with polished black centre stones.',
+  },
+  {
     id: 3,
     name: 'Mint Green Jewellery Set',
     price: 499,
@@ -125,20 +141,5 @@ export const JEWELRY_PRODUCTS: JewelryProduct[] = [
     material: 'Gold-tone watch finish',
     colour: 'Gold-tone',
     description: 'Gold-tone watch with multiple product and wrist views for easy WhatsApp ordering.',
-  }, {
-    id: 7,
-    name: 'Black Jewellery Set',
-    price: 499,
-    category: 'Jewellery Set',
-    images: [
-      {
-        src: 'assets/images/jewelry/black-set/main.png',
-        alt: 'Silver-tone geometric jewellery set with polished black centre stones',
-      },
-    ],
-    material: 'Silver-tone finish with polished black centre stones',
-    colour: 'Black and silver-tone',
-    description:
-      'A silver-tone geometric necklace and matching earrings featuring polished black centre stones.',
   },
 ];

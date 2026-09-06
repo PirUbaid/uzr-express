@@ -10,6 +10,8 @@ type CartItem = {
 
 type PaymentMethod = 'Cash on Delivery' | 'Online Transfer';
 
+type ProductFilter = 'All' | 'Jewellery Set' | 'Pendant' | 'Watch';
+
 type StoredCartItem = {
   id: number;
   quantity: number;
@@ -31,35 +33,65 @@ type CheckoutDraft = {
   standalone: true,
   imports: [FormsModule, RouterLink],
   template: `
-<section class="jewelryHero">
+<div class="jewelryAnnouncement" aria-label="Store information">
+  <span>New jewellery drop</span>
+  <i aria-hidden="true"></i>
+  <span>Delivery in Kohat</span>
+  <i aria-hidden="true"></i>
+  <span>Order confirmation on WhatsApp</span>
+</div>
+
+<section class="jewelryHero" aria-labelledby="jewelryHeroTitle">
   <div class="heroCopy">
-    <span class="pill">UZR Jewellery Collection</span>
-    <h1>Shop Jewellery Online</h1>
-    <p>Customers in Kohat can order Jewellery from UZR Express through WhatsApp with Cash on Delivery and delivery charges confirmed before completion.</p>
+    <span class="pill"><i class="fa-regular fa-gem"></i> UZR Jewellery</span>
+    <p class="heroKicker">The new collection · Kohat</p>
+    <h1 id="jewelryHeroTitle">Everyday elegance, <em>delivered.</em></h1>
+    <p class="heroLead">A curated edit of jewellery sets, pendants and watches—selected for effortless gifting and personal style.</p>
     <div class="heroActions">
-      <a class="shopNow" href="#products">Shop Now</a>
+      <a class="shopNow" href="#products">Explore the collection <i class="fa-solid fa-arrow-right"></i></a>
       <button class="cartBtn" type="button" (click)="openCart()">
         <i class="fa-solid fa-bag-shopping"></i>
-        Cart
+        View bag
         @if (cartCount > 0) {
           <span>{{ cartCount }}</span>
         }
       </button>
     </div>
+    <div class="heroNotes" aria-label="Shopping benefits">
+      <span><b>{{ products.length }}</b> curated pieces</span>
+      <span><b>COD</b> available</span>
+      <span><b>Local</b> WhatsApp support</span>
+    </div>
   </div>
 
-  <div class="heroPanel">
-    <strong>Cash on Delivery</strong>
-    <b>Jewellery delivered in Kohat</b>
-    <span>WhatsApp confirmation with full product summary.</span>
+  <div class="heroVisual" aria-label="Featured UZR Jewellery pieces">
+    <button class="heroImage heroImage--main" type="button" (click)="viewProduct(products[0])" aria-label="View Silver White Jewellery Set">
+      <img [src]="mainProductImage(products[0])?.src" [alt]="mainProductImage(products[0])?.alt" fetchpriority="high">
+    </button>
+    <button class="heroImage heroImage--accent" type="button" (click)="viewProduct(products[2])" aria-label="View Black Jewellery Set">
+      <img [src]="mainProductImage(products[2])?.src" [alt]="mainProductImage(products[2])?.alt">
+    </button>
+    <div class="heroMonogram" aria-hidden="true">
+      <small>Curated by</small>
+      <b>UZR</b>
+      <span>JEWELLERY</span>
+    </div>
   </div>
+</section>
+
+<section class="trustRibbon" aria-label="UZR Jewellery shopping benefits">
+  <div><i class="fa-regular fa-gem"></i><span><b>Curated collection</b><small>Carefully selected styles</small></span></div>
+  <div><i class="fa-solid fa-box"></i><span><b>Secure handling</b><small>Prepared with care</small></span></div>
+  <div><i class="fa-solid fa-money-bill-wave"></i><span><b>Flexible payment</b><small>COD or online transfer</small></span></div>
+  <div><i class="fa-brands fa-whatsapp"></i><span><b>Personal support</b><small>Confirmation on WhatsApp</small></span></div>
 </section>
 
 <section class="shopShell" id="products">
   <div class="shopHeader">
     <div>
-      <span class="eyebrow">Products</span>
-      <h2>Available Jewellery</h2>
+      <span class="eyebrow">The UZR edit</span>
+      <h2>Find your signature piece</h2>
+      <p>Modern accents for everyday moments, celebrations and thoughtful gifts.</p>
     </div>
     <button class="cartSummary" type="button" (click)="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
@@ -67,8 +99,21 @@ type CheckoutDraft = {
     </button>
   </div>
 
+  <div class="collectionFilters" aria-label="Filter jewellery collection">
+    @for (filter of productFilters; track filter) {
+      <button
+        type="button"
+        [class.is-active]="activeFilter === filter"
+        [attr.aria-pressed]="activeFilter === filter"
+        (click)="setProductFilter(filter)"
+      >
+        {{ filter === 'All' ? 'All collection' : filter }}
+      </button>
+    }
+  </div>
+
   <div class="productGrid">
-    @for (product of products; track product.id) {
+    @for (product of filteredProducts; track product.id) {
       <article class="productCard">
         <button class="photo" type="button" (click)="viewProduct(product)">
           @if (product.badge) {
@@ -86,20 +131,14 @@ type CheckoutDraft = {
         </button>
 
         <div class="productInfo">
-          <small>{{ product.category }}</small>
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <dl class="productMeta">
-            @for (detail of productDetailRows(product); track detail.label) {
-              <div>
-                <dt>{{ detail.label }}</dt>
-                <dd>{{ detail.value }}</dd>
-              </div>
-            }
-          </dl>
-          <div class="productPrice">
+          <div class="productTitleRow">
+            <div>
+              <small>{{ product.category }}</small>
+              <h3>{{ product.name }}</h3>
+            </div>
             <strong>{{ formatPrice(product.price) }}</strong>
           </div>
+          <button class="viewDetails" type="button" (click)="viewProduct(product)">View details <i class="fa-solid fa-arrow-right"></i></button>
           <div class="productActions">
             <button type="button" (click)="addToCart(product)">
               <i class="fa-solid fa-cart-plus"></i>
@@ -114,6 +153,19 @@ type CheckoutDraft = {
       </article>
     }
   </div>
+</section>
+
+<section class="brandStory">
+  <div class="brandStoryCopy">
+    <span class="eyebrow">Made for your moments</span>
+    <h2>Small details.<br><em>Lasting impressions.</em></h2>
+    <p>UZR Jewellery brings together polished, accessible pieces with the convenience of local ordering. See every available view, choose your favourite and confirm the complete order directly on WhatsApp.</p>
+    <a href="#products">Discover the collection <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+  <button class="brandStoryImage" type="button" (click)="viewProduct(products[6])" aria-label="View Golden Watch">
+    <img [src]="mainProductImage(products[6])?.src" [alt]="mainProductImage(products[6])?.alt" loading="lazy">
+    <span>Golden details<br><b>Timeless style</b></span>
+  </button>
 </section>
 
 @if (selectedProduct) {
@@ -412,19 +464,23 @@ type CheckoutDraft = {
 }
 
 <section class="orderInfo">
-  <span class="eyebrow">Order Information</span>
-  <h2>Before You Order</h2>
+  <div class="sectionIntro">
+    <span class="eyebrow">The UZR promise</span>
+    <h2>Beautifully simple shopping</h2>
+    <p>Clear product details and personal order support from selection to confirmation.</p>
+  </div>
   <div class="infoList">
-    <p><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</p>
-    <p><i class="fa-brands fa-whatsapp"></i> WhatsApp order confirmation</p>
-    <p><i class="fa-solid fa-location-dot"></i> Delivery within Kohat</p>
-    <p><i class="fa-solid fa-truck"></i> Delivery charges may vary depending on distance and location.</p>
+    <article><span>01</span><i class="fa-regular fa-eye"></i><h3>See every detail</h3><p>Open a product to view its available gallery, colour, finish and product information.</p></article>
+    <article><span>02</span><i class="fa-solid fa-bag-shopping"></i><h3>Build your order</h3><p>Add one or more pieces to your bag. Your cart stays saved when the page refreshes.</p></article>
+    <article><span>03</span><i class="fa-brands fa-whatsapp"></i><h3>Confirm personally</h3><p>Send your complete order summary to UZR on WhatsApp for delivery confirmation.</p></article>
   </div>
 </section>
 
 <section class="shopPolicies">
-  <span class="eyebrow">Customer Information</span>
-  <h2>Helpful Details Before You Order</h2>
+  <div class="sectionIntro">
+    <span class="eyebrow">Shop with clarity</span>
+    <h2>Helpful details before you order</h2>
+  </div>
   <div class="policyGrid">
     <a routerLink="/return-exchange-policy">
       <i class="fa-solid fa-rotate-left"></i>
@@ -464,6 +520,8 @@ export class JewelryComponent implements OnInit {
   @ViewChild('productDialog') productDialog?: ElementRef<HTMLElement>;
 
   products: JewelryProduct[] = JEWELRY_PRODUCTS;
+  readonly productFilters: ProductFilter[] = ['All', 'Jewellery Set', 'Pendant', 'Watch'];
+  activeFilter: ProductFilter = 'All';
 
   cart: CartItem[] = [];
   selectedProduct: JewelryProduct | null = null;
@@ -494,6 +552,16 @@ export class JewelryComponent implements OnInit {
 
   get cartTotal(): number {
     return this.cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  }
+
+  get filteredProducts(): JewelryProduct[] {
+    return this.activeFilter === 'All'
+      ? this.products
+      : this.products.filter((product) => product.category === this.activeFilter);
+  }
+
+  setProductFilter(filter: ProductFilter): void {
+    this.activeFilter = filter;
   }
 
   get selectedGalleryImage(): JewelryProductImage | null {
